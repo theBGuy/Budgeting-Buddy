@@ -7,7 +7,7 @@ router.post('/add', async (req, res) => {
     const envelope = new Envelope({ category: req.body.category, budget: req.body.budget });
 
     try {
-        if (await Envelope.exists({ category: req.body.category })) throw new Error("Envelope already exists. Ending process to preserve data");
+        if (await Envelope.exists({ category: req.body.category })) throw new Error('Envelope already exists. Ending process to preserve data');
         const dataToSave = await envelope.save();
         res.status(200).json(dataToSave);
     } catch (e) {
@@ -70,7 +70,7 @@ router.patch('/transfer/:fromId/:toId', async (req, res) => {
         from.budget -= Number(req.body.amount);
         to.budget += Number(req.body.amount);
         const newTo = await Envelope.findByIdAndUpdate(toId, to);
-        const newFrom = await Envelope.findByIdAndUpdate(fromId, from);
+        await Envelope.findByIdAndUpdate(fromId, from);
         res.send(newTo);
     } catch (e) {
         res.status(400).json({ message: e.message });
@@ -83,7 +83,7 @@ router.delete('/delete/:id', async (req, res) => {
         const id = req.params.id;
         if (id === 'all') {
             await Envelope.deleteMany({});
-            res.send(`All Documents have been deleted..`);
+            res.send('All Documents have been deleted..');
         } else {
             const data = await Envelope.findByIdAndDelete(id);
             res.send(`Document with ${data.category} has been deleted..`);
