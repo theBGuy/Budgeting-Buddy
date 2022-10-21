@@ -3,7 +3,7 @@ const router = express.Router();
 const Envelope = require('../models/envelopeModel');
 
 // Post Method
-router.post('/envelopes', async (req, res) => {
+router.post('/add', async (req, res) => {
     const envelope = new Envelope({ category: req.body.category, budget: req.body.budget });
 
     try {
@@ -11,13 +11,12 @@ router.post('/envelopes', async (req, res) => {
         const dataToSave = await envelope.save();
         res.status(200).json(dataToSave);
     } catch (e) {
-        alert(e.message);
         res.status(400).json({ message: e.message });
     }
 });
 
 // Get all Method
-router.get('/envelopes', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const data = await Envelope.find();
         res.json(data);
@@ -37,7 +36,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update by ID Method
-router.patch('/:id', async (req, res) => {
+router.patch('/update/:id', async (req, res) => {
     try {
         const id = req.params.id;
         const updatedData = req.body;
@@ -49,12 +48,35 @@ router.patch('/:id', async (req, res) => {
     }
 });
 
-// Delete by ID Method
-router.delete('/:id', async (req, res) => {
+// Update by ID Method
+router.patch('/transfer/:fromId/:toId', async (req, res) => {
+    try {
+        const { fromId, toId } = req.params;
+        const from = await Envelope.findById(fromId);
+        const to = await Envelope.findById(toId);
+        if (from.budget - Number(req.body.amount) < 0) 
+            throw new Error(`Not enough funds available in ${from.category} budget to transfer to ${to.category}`);
+        from.budget -= Number(req.body.amount);
+        to.budget += Number(req.body.amount);
+        const newTo = await Envelope.findByIdAndUpdate(toId, to);
+        const newFrom = await Envelope.findByIdAndUpdate(fromId, from);
+        res.send(newTo);
+    } catch (e) {
+        res.status(400).json({ message: e.message });
+    }
+});
+
+// Delete by ID Method or all
+router.delete('/delete/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const data = await Envelope.findByIdAndDelete(id);
-        res.send(`Document with ${data.name} has been deleted..`);
+        if (id === 'all') {
+            await Envelope.deleteMany({});
+            res.send(`All Documents have been deleted..`);
+        } else {
+            const data = await Envelope.findByIdAndDelete(id);
+            res.send(`Document with ${data.category} has been deleted..`);
+        }
     } catch (e) {
         res.status(400).json({ message: e.message });
     }

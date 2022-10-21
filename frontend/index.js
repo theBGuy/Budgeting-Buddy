@@ -1,7 +1,7 @@
-const form = document.getElementById('new-envelope-form');
+// const form = document.getElementById('new-envelope-form');
 
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
+// form.addEventListener('submit', (event) => {
+//   event.preventDefault();
 
-  form.reset();
-});
+//   form.reset();
+// });

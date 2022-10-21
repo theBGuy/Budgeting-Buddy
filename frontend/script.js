@@ -30,7 +30,7 @@ const deleteEnvelope = (id) => {
 const loadEnvelopes = () => {
     const xhttp = new XMLHttpRequest();
 
-    xhttp.open("GET", "http://localhost:3000/api/envelopes", false);
+    xhttp.open("GET", "http://localhost:4000/api/", false);
     xhttp.send();
 
     const envelopes = JSON.parse(xhttp.responseText);

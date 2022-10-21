@@ -2,7 +2,7 @@ require('dotenv').config({path: './db.env'});
 
 // require express for server
 const express = require('express');
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 // require middleware for express
 const bodyParser = require('body-parser');
@@ -14,7 +14,7 @@ const routes = require('./routes/routes');
 // require mongoose for MongoDb
 const mongoose = require('mongoose');
 const mongoString = process.env.DATABASE_URL;
-mongoose.connect(mongoString);
+mongoose.connect(mongoString, { useNewUrlParser: true });
 const database = mongoose.connection;
 
 database.on('error', (error) => {
