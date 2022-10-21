@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>Envelope Budgetting</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    </head>
+    <body>
+        <div class="container">
+            <nav><a href="./index.html">Create new Budget Envelope</a></nav>
+            <hr>
+                <h1>List of budget envelopes</h1>
+            <hr>
+            <div>
+                <div class="row" id="envelopes"></div>
+            </div>
+        </div>
+        <div id="editEnvelopeModal" class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Envelope</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editForm" method="POST">
+                            <div class="form-group">
+                                <label for="Category">Budget Category</label>
+                                <input class="form-control" name="category" id="category">
+                            </div>
+                            <div class="form-group">
+                                <label for="Budget">Allocated Budget</label>
+                                <input class="form-control" name="budget" id="budget">
+                            </div>
+                            <!--Other fields-->
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="script.js"></script>
+    </body>
+</html>
