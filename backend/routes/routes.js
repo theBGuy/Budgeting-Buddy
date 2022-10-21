@@ -48,6 +48,17 @@ router.patch('/update/:id', async (req, res) => {
     }
 });
 
+// Update all
+router.patch('/updateAll', async (req, res) => {
+    try {
+        const amount = Number(req.body.amount);
+        await Envelope.updateMany({}, {$inc: { budget: amount }});
+        res.send();
+    } catch (e) {
+        res.status(400).json({ message: e.message });
+    }
+});
+
 // Update by ID Method
 router.patch('/transfer/:fromId/:toId', async (req, res) => {
     try {
