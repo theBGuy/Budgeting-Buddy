@@ -1,13 +1,14 @@
-const express = require('express');
-const router = express.Router();
-const Envelope = require('../models/envelopeModel');
+const envelopeRouter = require("express").Router();
+const envelopeController = require("../controllers/envelope");
+const Envelope = require('../models/envelope');
 
-// Post Method
-router.post('/add', async (req, res) => {
-    const envelope = new Envelope({ category: req.body.category, budget: req.body.budget });
+envelopeRouter.post("/", async (req, res, next) => {
+    const envelope = new Envelope({ month: req.body.month, category: req.body.category, budget: req.body.budget });
 
     try {
-        if (await Envelope.exists({ category: req.body.category })) throw new Error('Envelope already exists. Ending process to preserve data');
+        if (await Envelope.exists({ month: req.body.month, category: req.body.category })) {
+            throw new Error('Envelope already exists. Ending process to preserve data');
+        }
         const dataToSave = await envelope.save();
         res.status(200).json(dataToSave);
     } catch (e) {
@@ -15,8 +16,7 @@ router.post('/add', async (req, res) => {
     }
 });
 
-// Get all Method
-router.get('/', async (req, res) => {
+envelopeRouter.get("/", async (req, res, next) => {
     try {
         const data = await Envelope.find();
         res.json(data);
@@ -26,7 +26,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get by ID Method
-router.get('/:id', async (req, res) => {
+envelopeRouter.get('/:id', async (req, res) => {
     try {
         const data = await Envelope.findById(req.params.id);
         res.json(data);
@@ -36,7 +36,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update by ID Method
-router.patch('/update/:id', async (req, res) => {
+envelopeRouter.patch('/update/:id', async (req, res) => {
     try {
         const id = req.params.id;
         const updatedData = req.body;
@@ -49,7 +49,7 @@ router.patch('/update/:id', async (req, res) => {
 });
 
 // Update all
-router.patch('/updateAll', async (req, res) => {
+envelopeRouter.patch('/updateAll', async (req, res) => {
     try {
         const amount = Number(req.body.amount);
         await Envelope.updateMany({}, {$inc: { budget: amount }});
@@ -60,7 +60,7 @@ router.patch('/updateAll', async (req, res) => {
 });
 
 // Update by ID Method
-router.patch('/transfer/:fromId/:toId', async (req, res) => {
+envelopeRouter.patch('/transfer/:fromId/:toId', async (req, res) => {
     try {
         const { fromId, toId } = req.params;
         const from = await Envelope.findById(fromId);
@@ -78,7 +78,7 @@ router.patch('/transfer/:fromId/:toId', async (req, res) => {
 });
 
 // Delete by ID Method or all
-router.delete('/delete/:id', async (req, res) => {
+envelopeRouter.delete('/delete/:id', async (req, res) => {
     try {
         const id = req.params.id;
         if (id === 'all') {
@@ -93,4 +93,4 @@ router.delete('/delete/:id', async (req, res) => {
     }
 });
 
-module.exports = router;
+module.exports = envelopeRouter;
