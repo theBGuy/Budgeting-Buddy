@@ -1,4 +1,5 @@
 module.exports = {
+    "root": true,
     "env": {
         "browser": true,
         "commonjs": true,
@@ -9,8 +10,6 @@ module.exports = {
         "eslint:recommended",
         "plugin:react/recommended"
     ],
-    "overrides": [
-    ],
     "parserOptions": {
         "ecmaVersion": "latest"
     },
@@ -18,17 +17,9 @@ module.exports = {
         "react"
     ],
     "rules": {
-        "indent": [
-            "error",
-            4
-        ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ]
-    }
+        "indent": ["error", 4],
+        "quotes": ["error", "double"],
+        "semi": ["error", "always"]
+    },
+    "overrides": [],
 };
