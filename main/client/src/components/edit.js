@@ -71,13 +71,20 @@ export default function Edit() {
      <form onSubmit={onSubmit}>
        <div className="form-group">
          <label htmlFor="month">Month</label>
-         <input
-           type="text"
-           className="form-control"
-           id="month"
-           value={form.month}
-           onChange={(e) => updateForm({ month: e.target.value })}
-         />
+         <select value={form.month} className="form-control" onChange={(e) => updateForm({ month: e.target.value })} required>
+            <option value="January">January</option>
+            <option value="Febuary">Febuary</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">June</option>
+            <option value="July">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+         </select>
        </div>
        <div className="form-group">
          <label htmlFor="category">Category</label>
@@ -87,6 +94,7 @@ export default function Edit() {
            id="category"
            value={form.category}
            onChange={(e) => updateForm({ category: e.target.value })}
+           required
          />
        </div>
        <div className="form-group">
@@ -97,6 +105,7 @@ export default function Edit() {
            id="budget"
            value={form.budget}
            onChange={(e) => updateForm({ budget: e.target.value })}
+           required
          />
        </div>
        <br />

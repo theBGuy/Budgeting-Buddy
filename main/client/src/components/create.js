@@ -46,7 +46,7 @@ export default function Create() {
      <form onSubmit={onSubmit}>
        <div className="form-group">
          <label htmlFor="month">Month</label>
-         {/* <select value={form.month} onChange={(e) => updateForm({ month: e.target.value })}>
+         <select value={form.month} className="form-control" onChange={(e) => updateForm({ month: e.target.value })} required>
             <option value="January">January</option>
             <option value="Febuary">Febuary</option>
             <option value="March">March</option>
@@ -59,14 +59,7 @@ export default function Create() {
             <option value="October">October</option>
             <option value="November">November</option>
             <option value="December">December</option>
-         </select> */}
-         <input
-           type="text"
-           className="form-control"
-           id="month"
-           value={form.month}
-           onChange={(e) => updateForm({ month: e.target.value })}
-         />
+         </select>
        </div>
        <div className="form-group">
          <label htmlFor="category">Category</label>
@@ -76,6 +69,7 @@ export default function Create() {
            id="category"
            value={form.category}
            onChange={(e) => updateForm({ category: e.target.value })}
+           required
          />
        </div>
        <div className="form-group">
@@ -86,6 +80,7 @@ export default function Create() {
            id="budget"
            value={form.budget}
            onChange={(e) => updateForm({ budget: e.target.value })}
+           required
          />
        </div>
        <div className="form-group">
