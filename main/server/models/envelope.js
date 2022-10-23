@@ -1,6 +1,10 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const envelopeSchema = new mongoose.Schema({
+    month: {
+        required: true,
+        type: String
+    },
     category: {
         required: true,
         type: String
@@ -11,4 +15,4 @@ const envelopeSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Envelope', envelopeSchema);
+module.exports = mongoose.model("Envelope", envelopeSchema);
