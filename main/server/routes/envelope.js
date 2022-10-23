@@ -1,13 +1,12 @@
 const envelopeRouter = require("express").Router();
-const envelopeController = require("../controllers/envelope");
-const Envelope = require('../models/envelope');
+const Envelope = require("../models/envelope");
 
-envelopeRouter.post("/", async (req, res, next) => {
+envelopeRouter.post("/", async (req, res) => {
     const envelope = new Envelope({ month: req.body.month, category: req.body.category, budget: req.body.budget });
 
     try {
         if (await Envelope.exists({ month: req.body.month, category: req.body.category })) {
-            throw new Error('Envelope already exists. Ending process to preserve data');
+            throw new Error("Envelope already exists. Ending process to preserve data");
         }
         const dataToSave = await envelope.save();
         res.status(200).json(dataToSave);
@@ -16,7 +15,7 @@ envelopeRouter.post("/", async (req, res, next) => {
     }
 });
 
-envelopeRouter.get("/", async (req, res, next) => {
+envelopeRouter.get("/", async (req, res) => {
     try {
         const data = await Envelope.find();
         res.json(data);
@@ -26,7 +25,7 @@ envelopeRouter.get("/", async (req, res, next) => {
 });
 
 // Get by ID Method
-envelopeRouter.get('/:id', async (req, res) => {
+envelopeRouter.get("/:id", async (req, res) => {
     try {
         const data = await Envelope.findById(req.params.id);
         res.json(data);
@@ -36,7 +35,7 @@ envelopeRouter.get('/:id', async (req, res) => {
 });
 
 // Update by ID Method
-envelopeRouter.patch('/update/:id', async (req, res) => {
+envelopeRouter.patch("/update/:id", async (req, res) => {
     try {
         const id = req.params.id;
         const updatedData = req.body;
@@ -49,7 +48,7 @@ envelopeRouter.patch('/update/:id', async (req, res) => {
 });
 
 // Update all
-envelopeRouter.patch('/updateAll', async (req, res) => {
+envelopeRouter.patch("/updateAll", async (req, res) => {
     try {
         const amount = Number(req.body.amount);
         await Envelope.updateMany({}, {$inc: { budget: amount }});
@@ -60,7 +59,7 @@ envelopeRouter.patch('/updateAll', async (req, res) => {
 });
 
 // Update by ID Method
-envelopeRouter.patch('/transfer/:fromId/:toId', async (req, res) => {
+envelopeRouter.patch("/transfer/:fromId/:toId", async (req, res) => {
     try {
         const { fromId, toId } = req.params;
         const from = await Envelope.findById(fromId);
@@ -78,12 +77,12 @@ envelopeRouter.patch('/transfer/:fromId/:toId', async (req, res) => {
 });
 
 // Delete by ID Method or all
-envelopeRouter.delete('/delete/:id', async (req, res) => {
+envelopeRouter.delete("/delete/:id", async (req, res) => {
     try {
         const id = req.params.id;
-        if (id === 'all') {
+        if (id === "all") {
             await Envelope.deleteMany({});
-            res.send('All Documents have been deleted..');
+            res.send("All Documents have been deleted..");
         } else {
             const data = await Envelope.findByIdAndDelete(id);
             res.send(`Document with ${data.category} has been deleted..`);
