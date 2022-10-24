@@ -15,14 +15,14 @@ app.use("/envelope", envelopeRoutes);
 
 // connect to the db
 mongoose
-    .connect(process.env.ATLAS_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+  .connect(process.env.ATLAS_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
 
-    })
-    .then(() => console.log("db Connected"));
+  })
+  .then(() => console.log("db Connected"));
 
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });

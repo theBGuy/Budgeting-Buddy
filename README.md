@@ -35,9 +35,15 @@ npm run dev
 - [ ] Display total budget by month
 - [ ] Bulk add/delete/modfy envelopes
 - [ ] Transfer budget from one envelope to another
+- [ ] Display data trends by category
+- [ ] Take data input for each category to show how much of designated budget has been used
+  - should automatically deduct amount after submission. Example:
+    1. Category is Food with budget 500.
+    2. User inputs they spent 50 dollars on grocies.
+    3. Category header updates to display Assigned Budget: 500 | Remaining Budget: 450
+    4. Total monthly budget updates to display amount remaining as well
 
 ## Contributing
 - If you are intersted feel free to contribute.
 
 ![image](https://user-images.githubusercontent.com/60308670/197365310-96d6cc0a-885b-4b45-9642-ca579a825bb5.png)
-
