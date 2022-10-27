@@ -1,5 +1,5 @@
 const envelopeRouter = require("express").Router();
-const Envelope = require("../models/envelope");
+const {Envelope} = require("../models/envelope");
 
 envelopeRouter.post("/", async (req, res) => {
   const envelope = new Envelope({ month: req.body.month, category: req.body.category, budget: req.body.budget });

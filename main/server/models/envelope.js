@@ -1,10 +1,6 @@
 const mongoose = require("mongoose");
 
 const envelopeSchema = new mongoose.Schema({
-  month: {
-    required: true,
-    type: String
-  },
   category: {
     required: true,
     type: String
@@ -12,7 +8,17 @@ const envelopeSchema = new mongoose.Schema({
   budget: {
     required: true,
     type: Number
+  },
+  spent: {
+    type: Number, 
+    default: 0
+  }, 
+  monthId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Month"
   }
 });
 
-module.exports = mongoose.model("Envelope", envelopeSchema);
+const Envelope = mongoose.model("Envelope", envelopeSchema);
+
+module.exports = { Envelope };
