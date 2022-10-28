@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const {monthSchema} = require("./month");
+const { monthSchema } = require("./month");
 
 const yearSchema = new mongoose.Schema({
   year: {

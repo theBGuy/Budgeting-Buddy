@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const monthSchema = new mongoose.Schema({
+  month: {
+    required: true,
+    type: String
+  },
   budget: {
     required: true,
     type: Number
