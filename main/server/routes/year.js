@@ -44,6 +44,7 @@ yearRouter.post("/:year/:month/add", async (req, res) => {
   try {
     const { monthId, category, budget } = req.body;
     const envelope = new Envelope({ month: monthId, category: category, budget: budget });
+    await envelope.save();
     const updateDocument = {
       $push: { "months.$[months].envelopes": envelope._id },
       $inc: { 
@@ -97,6 +98,22 @@ yearRouter.get("/:year/months", async (req, res) => {
     const year = req.params.year;
     const data = await Year.findOne({ year: year });
     res.json(data.months);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+/**
+ * Get all envelopes of a month of a year
+ */
+yearRouter.get("/:year/:month/all", async (req, res) => {
+  try {
+    const { year, month } = req.params;
+    const projection = {
+      months: { $elemMatch: { month: month }},
+    };
+    const data = await Year.findOne({ year: year }, projection);
+    res.json(data);
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
@@ -171,6 +188,27 @@ yearRouter.delete("/:year", async (req, res) => {
   try {
     const year = req.params.year;
     const data = await Year.deleteOne({ year: year });
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+/**
+ * Delete envelope from month by id
+ */
+yearRouter.delete("/:year/:month/:id", async (req, res) => {
+  try {
+    const { year, month, id } = req.params;
+    const updateDocument = {
+      $pull: { "months.$[months].envelopes": id },
+    };
+    const options = {
+      arrayFilters: [{
+        "months.month": month,
+      }]
+    };
+    const data = await Year.findOneAndUpdate({ year: year }, updateDocument, options);
     res.json(data);
   } catch (e) {
     res.status(500).json({ message: e.message });
