@@ -45,11 +45,13 @@ yearRouter.post("/:year/:month/add", async (req, res) => {
     const { monthId, category, budget } = req.body;
     const envelope = new Envelope({ month: monthId, category: category, budget: budget });
     await envelope.save();
+    const incAmount = Number(budget);
+    const decAmount = incAmount * -1;
     const updateDocument = {
       $push: { "months.$[months].envelopes": envelope._id },
       $inc: { 
-        "remaining": Number(budget) * -1, "spent": Number(budget),
-        "months.$[months].remaining": Number(budget) * -1, "months.$[months].spent": Number(budget)
+        "remaining": decAmount, "spent": incAmount,
+        "months.$[months].remaining": decAmount, "months.$[months].spent": incAmount
       },
     };
     const options = {
@@ -104,6 +106,22 @@ yearRouter.get("/:year/months", async (req, res) => {
 });
 
 /**
+ * Get month of a year
+ */
+yearRouter.get("/:year/:month", async (req, res) => {
+  try {
+    const { year, month } = req.params;
+    const projection = {
+      months: { $elemMatch: { month: month }},
+    };
+    const data = await Year.findOne({ year: year }, projection);
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+/**
  * Get all envelopes of a month of a year
  */
 yearRouter.get("/:year/:month/all", async (req, res) => {
@@ -113,7 +131,7 @@ yearRouter.get("/:year/:month/all", async (req, res) => {
       months: { $elemMatch: { month: month }},
     };
     const data = await Year.findOne({ year: year }, projection);
-    res.json(data);
+    res.json(data.months[0].envelopes);
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
@@ -142,7 +160,7 @@ yearRouter.patch("/:year", async (req, res) => {
 yearRouter.patch("/:year/all", async (req, res) => {
   try {
     const updateDocument = {
-      $inc: { "months.$[].total": Number(req.body.amount) }
+      $inc: { "months.$[].budget": Number(req.body.amount || 0) }
     };
     const updated = await Year.updateMany({ year: Number(req.params.year) }, updateDocument);
     res.json(updated);
@@ -154,7 +172,7 @@ yearRouter.patch("/:year/all", async (req, res) => {
 yearRouter.patch("/:year/:month", async (req, res) => {
   try {
     const updateDocument = {
-      $inc: { "months.$[months].total": Number(req.body.amount) }
+      $inc: { "months.$[months].budget": Number(req.body.amount || 0) }
     };
     const options = {
       arrayFilters: [{
@@ -200,8 +218,15 @@ yearRouter.delete("/:year", async (req, res) => {
 yearRouter.delete("/:year/:month/:id", async (req, res) => {
   try {
     const { year, month, id } = req.params;
+    const envelope = await Envelope.findOneAndDelete({_id: id});
+    const incAmount = envelope.budget;
+    const decAmount = envelope.budget * -1;
     const updateDocument = {
       $pull: { "months.$[months].envelopes": id },
+      $inc: { 
+        "remaining": incAmount, "spent": decAmount,
+        "months.$[months].remaining": incAmount, "months.$[months].spent": decAmount
+      }
     };
     const options = {
       arrayFilters: [{
