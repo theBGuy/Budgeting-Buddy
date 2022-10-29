@@ -4,19 +4,19 @@ const { Month } = require("../models/month");
 const { Envelope } = require("../models/envelope");
 // const mongoose = require("mongoose");
 
-async function createMonths(total) {  
+async function createMonths(budget) {  
   const monthsArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const months = await Promise.all(monthsArr.map(async (monthString) => {
-    const month = new Month({month: monthString, total: total});
+    const month = new Month({ month: monthString, budget, remaining: budget });
     return month;
   }));
   return months;
 }
 
-async function createYear(n, total = 0) {
-  const perMonth = total > 0 ? Math.floor(total / 12) : 0;
+async function createYear(n, budget = 0) {
+  const perMonth = budget > 0 ? Math.floor(budget / 12) : 0;
   const months = await createMonths(perMonth);
-  const year = new Year({year: n, total, months});
+  const year = new Year({ year: n, budget, remaining: budget, months });
   await year.save();
   return year;
 }
@@ -27,7 +27,7 @@ async function createYear(n, total = 0) {
  */
 yearRouter.post("/add", async (req, res) => {
   try {
-    const dataToSave = createYear(req.body.year, req.body.total);
+    const dataToSave = createYear(req.body.year, req.body.budget);
     res.status(200).json(dataToSave);
   } catch (e) {
     res.status(400).json({ message: e.message });
@@ -122,9 +122,9 @@ yearRouter.get("/:year/:month", async (req, res) => {
 });
 
 /**
- * Get all envelopes of a month of a year
+ * Get all envelopes id's of a month of a year
  */
-yearRouter.get("/:year/:month/all", async (req, res) => {
+yearRouter.get("/:year/:month/allId", async (req, res) => {
   try {
     const { year, month } = req.params;
     const projection = {
@@ -132,6 +132,19 @@ yearRouter.get("/:year/:month/all", async (req, res) => {
     };
     const data = await Year.findOne({ year: year }, projection);
     res.json(data.months[0].envelopes);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+/**
+ * Get all envelopes of a month of a year
+ */
+yearRouter.get("/:year/:monthId/all", async (req, res) => {
+  try {
+    const { monthId } = req.params;
+    const data = await Envelope.find({ month: monthId });
+    res.json(data);
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
