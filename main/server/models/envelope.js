@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const envelopeSchema = new mongoose.Schema({
   category: {
+    type: String,
     required: true,
-    type: String
   },
   budget: {
+    type: Number,
     required: true,
-    type: Number
   },
   spent: {
     type: Number, 

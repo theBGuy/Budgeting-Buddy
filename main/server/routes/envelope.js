@@ -2,9 +2,8 @@ const envelopeRouter = require("express").Router();
 const {Envelope} = require("../models/envelope");
 
 envelopeRouter.post("/", async (req, res) => {
-  const envelope = new Envelope({ month: req.body.month, category: req.body.category, budget: req.body.budget });
-
   try {
+    const envelope = new Envelope({ month: req.body.month, category: req.body.category, budget: req.body.budget });
     if (await Envelope.exists({ month: req.body.month, category: req.body.category })) {
       throw new Error("Envelope already exists. Ending process to preserve data");
     }
@@ -17,7 +16,8 @@ envelopeRouter.post("/", async (req, res) => {
 
 envelopeRouter.get("/", async (req, res) => {
   try {
-    const data = await Envelope.find();
+    const filter = Object.assign({}, req.body);
+    const data = await Envelope.find(filter);
     res.json(data);
   } catch (e) {
     res.status(500).json({ message: e.message });
