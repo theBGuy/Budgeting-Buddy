@@ -1,7 +1,7 @@
 const yearRouter = require("express").Router();
-const Year = require("../models/year");
-const Month = require("../models/month");
-const Envelope = require("../models/envelope");
+const { Year } = require("../models/year");
+const { Month } = require("../models/month");
+const { Envelope } = require("../models/envelope");
 // const mongoose = require("mongoose");
 
 async function createMonths(total) {  
