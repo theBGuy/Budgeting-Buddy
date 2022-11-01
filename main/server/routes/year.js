@@ -72,7 +72,7 @@ yearRouter.post("/:year/:month/add", async (req, res) => {
  */
 yearRouter.get("/all", async (req, res) => {
   try {
-    const data = await Year.find();
+    const data = await Year.find().sort({ year: 1 });
     res.json(data);
   } catch (e) {
     res.status(500).json({ message: e.message });
