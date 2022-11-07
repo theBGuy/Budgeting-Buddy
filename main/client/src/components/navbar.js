@@ -29,8 +29,8 @@ export default function Navbar() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav ml-auto">
             <li className="nav-item">
-              <NavLink className="nav-link" to="/create">
-               Create Envelope
+              <NavLink className="nav-link" to={"/createYear"}>
+               Create Year
               </NavLink>
             </li>
           </ul>

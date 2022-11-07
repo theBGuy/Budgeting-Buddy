@@ -1,13 +1,13 @@
 import React from "react";
-import EnvelopeForm from "./envelopeForm";
+import YearForm from "./yearForm";
  
-export default function Create() {
+export default function CreateYear() {
  
   // This following section will display the form that takes the input from the user.
   return (
     <div>
-      <h3>Create New Envelope</h3>
-      <EnvelopeForm isCreate />
+      <h3>Create New Year</h3>
+      <YearForm isCreate />
     </div>
   );
 }
