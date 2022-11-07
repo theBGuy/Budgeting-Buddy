@@ -5,6 +5,28 @@ import { Box, Collapse, IconButton, TableBody, Typography } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
+const MonthRecord = (row) => {
+  const [showEnv, setOpenEnv] = useState(false);
+
+  return (
+    <TableRow key={row.props._id}>
+      <TableCell>
+        <IconButton
+          aria-label="expand month"
+          size="small"
+          onClick={() => setOpenEnv(!showEnv)}
+        >
+          {showEnv ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+        </IconButton>
+      </TableCell>
+      <TableCell>{row.props.month}</TableCell>
+      <TableCell align="right">{row.props.budget}</TableCell>
+      <TableCell align="right">{row.props.spent}</TableCell>
+      <TableCell align="right">{row.props.remaining}</TableCell>
+    </TableRow>
+  );
+};
+
 const YearRecord = (props) => {
   const [open, setOpen] = useState(false);
 
@@ -47,6 +69,7 @@ const YearRecord = (props) => {
               <Table size="small" className="months">
                 <TableHead>
                   <TableRow>
+                    <TableCell></TableCell>
                     <TableCell>Month</TableCell>
                     <TableCell align="right">Budget</TableCell>
                     <TableCell align="right">Spent</TableCell>
@@ -55,12 +78,7 @@ const YearRecord = (props) => {
                 </TableHead>
                 <TableBody>
                   {props.record.months.map(row => (
-                    <TableRow key={row._id}>
-                      <TableCell>{row.month}</TableCell>
-                      <TableCell align="right">{row.budget}</TableCell>
-                      <TableCell align="right">{row.spent}</TableCell>
-                      <TableCell align="right">{row.remaining}</TableCell>
-                    </TableRow>
+                    <MonthRecord props={row} />
                   ))}
                 </TableBody>
               </Table>
