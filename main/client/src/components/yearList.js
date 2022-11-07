@@ -2,32 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { Box, Collapse, IconButton, TableBody, Typography } from '@mui/material';
-import { KeyboardArrowDownIcon, KeyboardArrowUpIcon } from '@mui/icons-material';
- 
-// const Record = (props) => (
-//   <tr>
-//     <td>
-//       <Link className="btn btn-link" to={`/view/${props.record.year}`}>{props.record.year}</Link> 
-//     </td>
-//     <td>{props.record.budget}</td>
-//     <td>{props.record.spent}</td>
-//     <td>{props.record.remaining}</td>
-//     <td>
-//       <Link className="btn btn-link" to={`/edit/${props.record.year}`}>Edit</Link> |
-//       <button className="btn btn-link"
-//         onClick={() => {
-//           props.deleteRecord(props.record.year);
-//         }}
-//       >
-//        Delete
-//       </button>
-//     </td>
-//   </tr>
-// );
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const YearRecord = (props) => {
   const [open, setOpen] = useState(false);
-  // const [open, setOpen] = useState(false);
 
   return (
     <React.Fragment>
@@ -76,7 +55,7 @@ const YearRecord = (props) => {
                 </TableHead>
                 <TableBody>
                   {props.record.months.map(row => (
-                    <TableRow key={row._id} sx={{ '& > *': { borderBottom: 'unset' } }}>
+                    <TableRow key={row._id}>
                       <TableCell>{row.month}</TableCell>
                       <TableCell align="right">{row.budget}</TableCell>
                       <TableCell align="right">{row.spent}</TableCell>
