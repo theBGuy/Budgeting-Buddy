@@ -14,7 +14,6 @@ const envelopeSchema = new mongoose.Schema({
     default: 0
   }, 
   remaining: {
-    required: true,
     type: Number,
   },
   monthId: {

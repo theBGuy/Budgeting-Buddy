@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function EnvelopeForm (props) {
-  const [form, setForm] = useState({
-    name: "",
-    position: "",
-    level: "",
-  });
   const params = useParams();
   const navigate = useNavigate();
+  const [form, setForm] = useState({
+    month: "",
+    category: "",
+    budget: "",
+  });
 
   useEffect(() => {
     if (params.id) {
@@ -52,12 +52,12 @@ export default function EnvelopeForm (props) {
       // When a post request is sent to the create url, we'll add a new record to the database.
       const newEnvelope = { ...form };
             
-      await fetch("http://localhost:5000/envelope/", {
+      await fetch(`http://localhost:5000/year/${params.year}/${form.month}/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newEnvelope),
+        body: JSON.stringify(Object.assign(newEnvelope, { monthId: params.month })),
       })
         .catch(error => {
           window.alert(error);
@@ -127,6 +127,7 @@ export default function EnvelopeForm (props) {
         />
       </div>
       <div className="form-group">
+        {/* todo - exit button?*/}
         <input
           type="submit"
           value={props.isCreate ? "Create Envelope" : "Edit Envelope"}
