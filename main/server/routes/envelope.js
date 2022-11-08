@@ -34,6 +34,19 @@ envelopeRouter.get("/:id", async (req, res) => {
   }
 });
 
+/**
+ * Get all envelopes of a month
+ */
+envelopeRouter.get("/:monthId/all", async (req, res) => {
+  try {
+    const { monthId } = req.params;
+    const data = await Envelope.find({ month: monthId });
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
 // Update by ID Method
 envelopeRouter.patch("/update/:id", async (req, res) => {
   try {

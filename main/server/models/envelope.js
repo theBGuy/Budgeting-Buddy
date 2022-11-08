@@ -13,6 +13,10 @@ const envelopeSchema = new mongoose.Schema({
     type: Number, 
     default: 0
   }, 
+  remaining: {
+    required: true,
+    type: Number,
+  },
   monthId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Month"

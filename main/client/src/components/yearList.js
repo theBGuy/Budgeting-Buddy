@@ -5,25 +5,116 @@ import { Box, Collapse, IconButton, TableBody, Typography } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
+const EnvelopeRecord = (props) => (
+  <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+    <TableCell component="th" scope="row">
+      {props.record.category}
+    </TableCell>
+    <TableCell align="right">{props.record.budget}</TableCell>
+    <TableCell align="right">{props.record.spent}</TableCell>
+    <TableCell align="right">{props.record.remaining}</TableCell>
+    <TableCell align="right">
+      <Link className="btn btn-link" to={`/edit/${props.record._id}`}>Edit</Link> |
+      <button className="btn btn-link"
+        onClick={() => {
+          props.deleteRecord(props.record._id);
+        }}
+      >
+      Delete
+      </button>
+    </TableCell>
+  </TableRow>
+);
+
 const MonthRecord = (row) => {
   const [showEnv, setOpenEnv] = useState(false);
+  const [records, setRecords] = useState([]);
+ 
+  // This method fetches the records from the database.
+  useEffect(() => {
+    async function getRecords() {
+      console.log(row.props._id);
+      const response = await fetch(`http://localhost:5000/envelope/${row.props._id}/all`);
+ 
+      if (!response.ok) {
+        const message = `An error occurred: ${response.statusText}`;
+        window.alert(message);
+        return;
+      }
+ 
+      const records = await response.json();
+      setRecords(records);
+    }
+ 
+    getRecords();
+ 
+    return;
+  }, [row.props._id, records.length]);
+ 
+  // This method will delete a record
+  async function deleteRecord(year) {
+    await fetch(`http://localhost:5000/year/${year}`, {
+      method: "DELETE"
+    });
+ 
+    const newYears = records.filter((el) => el.year !== year);
+    setRecords(newYears);
+  }
+
+  function recordList() {
+    return records.map((record) => {
+      return (
+        <EnvelopeRecord
+          record={record}
+          deleteRecord={() => deleteRecord(record._id)}
+          key={record._id}
+        />
+      );
+    });
+  }
 
   return (
-    <TableRow key={row.props._id}>
-      <TableCell>
-        <IconButton
-          aria-label="expand month"
-          size="small"
-          onClick={() => setOpenEnv(!showEnv)}
-        >
-          {showEnv ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-        </IconButton>
-      </TableCell>
-      <TableCell>{row.props.month}</TableCell>
-      <TableCell align="right">{row.props.budget}</TableCell>
-      <TableCell align="right">{row.props.spent}</TableCell>
-      <TableCell align="right">{row.props.remaining}</TableCell>
-    </TableRow>
+    <React.Fragment>
+      <TableRow key={row.props._id}>
+        <TableCell>
+          <IconButton
+            aria-label="expand month"
+            size="small"
+            onClick={() => setOpenEnv(!showEnv)}
+          >
+            {showEnv ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+        <TableCell>{row.props.month}</TableCell>
+        <TableCell align="right">{row.props.budget}</TableCell>
+        <TableCell align="right">{row.props.spent}</TableCell>
+        <TableCell align="right">{row.props.remaining}</TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={showEnv} timeout="auto" unmountOnExit>
+            <Box sx={{ margin: 1 }}>
+              <Typography variant="h6" gutterBottom component="div">
+                Envelopes
+              </Typography>
+              <Table size="small" className="envelopes">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Category</TableCell>
+                    <TableCell align="right">Budget</TableCell>
+                    <TableCell align="right">Spent</TableCell>
+                    <TableCell align="right">Remaining</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {recordList()}
+                </TableBody>
+              </Table>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </React.Fragment>
   );
 };
 
