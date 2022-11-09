@@ -17,7 +17,7 @@ const monthSchema = new mongoose.Schema({
     type: Number, 
     default: 0
   }
-});
+}, {autoCreate: false});
 
 const Month = mongoose.model("Month", monthSchema);
 

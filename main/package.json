@@ -7,7 +7,7 @@
     "install-server": "npm install --prefix server",
     "install-client": "npm install --prefix client",
     "install": "npm install concurrently --save & concurrently \"npm run install-server\" \"npm run install-client\"",
-    "dev": "concurrently \"npm run server\" \"npm run client"
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "dependencies": {
     "concurrently": "^7.5.0"
