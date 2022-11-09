@@ -1,0 +1,13 @@
+{
+  "name": "main",
+  "scripts": {
+    "installAll": "npm install && cd server && npm install && cd ../client && npm install",
+    "dev": "concurrently -n 'server,client' -c 'magenta,blue' \"cd server && npm start\" \"cd client && npm start\""
+  },
+  "devDependencies": {
+    "concurrently": "^6.5.1",
+    "eslint": "^8.26.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.5.0"
+  }
+}

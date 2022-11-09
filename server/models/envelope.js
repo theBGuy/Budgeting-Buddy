@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const envelopeSchema = new mongoose.Schema({
   category: {
@@ -10,19 +10,19 @@ const envelopeSchema = new mongoose.Schema({
     required: true,
   },
   spent: {
-    type: Number, 
-    default: 0
-  }, 
+    type: Number,
+    default: 0,
+  },
   remaining: {
     required: true,
     type: Number,
   },
   monthId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Month"
-  }
+    ref: 'Month',
+  },
 });
 
-const Envelope = mongoose.model("Envelope", envelopeSchema);
+const Envelope = mongoose.model('Envelope', envelopeSchema);
 
 module.exports = { Envelope };

@@ -1,11 +1,22 @@
-const envelopeRouter = require("express").Router();
-const { Envelope } = require("../models/envelope");
+const envelopeRouter = require('express').Router();
+const { Envelope } = require('../models/envelope');
 
-envelopeRouter.post("/", async (req, res) => {
+envelopeRouter.post('/', async (req, res) => {
   try {
-    const envelope = new Envelope({ month: req.body.month, category: req.body.category, budget: req.body.budget });
-    if (await Envelope.exists({ month: req.body.month, category: req.body.category })) {
-      throw new Error("Envelope already exists. Ending process to preserve data");
+    const envelope = new Envelope({
+      month: req.body.month,
+      category: req.body.category,
+      budget: req.body.budget,
+    });
+    if (
+      await Envelope.exists({
+        month: req.body.month,
+        category: req.body.category,
+      })
+    ) {
+      throw new Error(
+        'Envelope already exists. Ending process to preserve data'
+      );
     }
     const dataToSave = await envelope.save();
     res.status(200).json(dataToSave);
@@ -14,7 +25,7 @@ envelopeRouter.post("/", async (req, res) => {
   }
 });
 
-envelopeRouter.get("/", async (req, res) => {
+envelopeRouter.get('/', async (req, res) => {
   try {
     const filter = Object.assign({}, req.body);
     const data = await Envelope.find(filter);
@@ -25,7 +36,7 @@ envelopeRouter.get("/", async (req, res) => {
 });
 
 // Get by ID Method
-envelopeRouter.get("/:id", async (req, res) => {
+envelopeRouter.get('/:id', async (req, res) => {
   try {
     const data = await Envelope.findById(req.params.id);
     res.json(data);
@@ -37,7 +48,7 @@ envelopeRouter.get("/:id", async (req, res) => {
 /**
  * Get all envelopes of a month
  */
-envelopeRouter.get("/:monthId/all", async (req, res) => {
+envelopeRouter.get('/:monthId/all', async (req, res) => {
   try {
     const { monthId } = req.params;
     const data = await Envelope.find({ month: monthId });
@@ -48,7 +59,7 @@ envelopeRouter.get("/:monthId/all", async (req, res) => {
 });
 
 // Update by ID Method
-envelopeRouter.patch("/update/:id", async (req, res) => {
+envelopeRouter.patch('/update/:id', async (req, res) => {
   try {
     const id = req.params.id;
     const updatedData = req.body;
@@ -61,10 +72,10 @@ envelopeRouter.patch("/update/:id", async (req, res) => {
 });
 
 // Update all
-envelopeRouter.patch("/updateAll", async (req, res) => {
+envelopeRouter.patch('/updateAll', async (req, res) => {
   try {
     const amount = Number(req.body.amount);
-    await Envelope.updateMany({}, {$inc: { budget: amount }});
+    await Envelope.updateMany({}, { $inc: { budget: amount } });
     res.send();
   } catch (e) {
     res.status(400).json({ message: e.message });
@@ -72,13 +83,15 @@ envelopeRouter.patch("/updateAll", async (req, res) => {
 });
 
 // Update by ID Method
-envelopeRouter.patch("/transfer/:fromId/:toId", async (req, res) => {
+envelopeRouter.patch('/transfer/:fromId/:toId', async (req, res) => {
   try {
     const { fromId, toId } = req.params;
     const from = await Envelope.findById(fromId);
     const to = await Envelope.findById(toId);
-    if (from.budget - Number(req.body.amount) < 0) 
-      throw new Error(`Not enough funds available in ${from.category} budget to transfer to ${to.category}`);
+    if (from.budget - Number(req.body.amount) < 0)
+      throw new Error(
+        `Not enough funds available in ${from.category} budget to transfer to ${to.category}`
+      );
     from.budget -= Number(req.body.amount);
     to.budget += Number(req.body.amount);
     const newTo = await Envelope.findByIdAndUpdate(toId, to);
@@ -90,12 +103,12 @@ envelopeRouter.patch("/transfer/:fromId/:toId", async (req, res) => {
 });
 
 // Delete by ID Method or all
-envelopeRouter.delete("/delete/:id", async (req, res) => {
+envelopeRouter.delete('/delete/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    if (id === "all") {
+    if (id === 'all') {
       await Envelope.deleteMany({});
-      res.send("All Documents have been deleted..");
+      res.send('All Documents have been deleted..');
     } else {
       const data = await Envelope.findByIdAndDelete(id);
       res.send(`Document with ${data.category} has been deleted..`);
