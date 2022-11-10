@@ -111,10 +111,7 @@ const MonthRecord = (row) => {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={showEnv} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Envelopes
-              </Typography>
-              <Table size="small" className="envelopes">
+              <Table size="small" className="envelopes" sx={{ bgcolor: 'darkgray'}}>
                 <TableHead>
                   <TableRow>
                     <TableCell>Category</TableCell>
@@ -195,7 +192,6 @@ const YearRecord = (props) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {console.log(props.record.months)}
                   {props.record.months.map((row) => (
                     <MonthRecord props={row} year={props.record.year} />
                   ))}
