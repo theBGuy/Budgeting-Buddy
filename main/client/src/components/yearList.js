@@ -1,7 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Table, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import { Box, Collapse, IconButton, TableBody, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  Table,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@mui/material';
+import {
+  Box,
+  Collapse,
+  IconButton,
+  TableBody,
+  Typography,
+} from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
@@ -14,13 +26,17 @@ const EnvelopeRecord = (props) => (
     <TableCell align="right">{props.record.spent}</TableCell>
     <TableCell align="right">{props.record.remaining}</TableCell>
     <TableCell align="right">
-      <Link className="btn btn-link" to={`/edit/${props.record._id}`}>Edit</Link> |
-      <button className="btn btn-link"
+      <Link className="btn btn-link" to={`/edit/${props.record._id}`}>
+        Edit
+      </Link>{' '}
+      |
+      <button
+        className="btn btn-link"
         onClick={() => {
           props.deleteRecord(props.record._id);
         }}
       >
-      Delete
+        Delete
       </button>
     </TableCell>
   </TableRow>
@@ -29,33 +45,35 @@ const EnvelopeRecord = (props) => (
 const MonthRecord = (row) => {
   const [showEnv, setOpenEnv] = useState(false);
   const [records, setRecords] = useState([]);
- 
+
   // This method fetches the records from the database.
   useEffect(() => {
     async function getRecords() {
-      const response = await fetch(`http://localhost:5000/envelope/${row.props._id}/all`);
- 
+      const response = await fetch(
+        `http://localhost:5000/envelope/${row.props._id}/all`
+      );
+
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         window.alert(message);
         return;
       }
- 
+
       const records = await response.json();
       setRecords(records);
     }
- 
+
     getRecords();
- 
+
     return;
-  }, [row.props._id, records.length]);
- 
+  }, [row.props._id]);
+
   // This method will delete a record
   async function deleteRecord(year) {
     await fetch(`http://localhost:5000/year/${year}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
- 
+
     const newYears = records.filter((el) => el.year !== year);
     setRecords(newYears);
   }
@@ -104,13 +122,16 @@ const MonthRecord = (row) => {
                     <TableCell align="right">Spent</TableCell>
                     <TableCell align="right">Remaining</TableCell>
                     <TableCell align="right">
-                      <Link className="btn btn-link" to={`/createEnvelope/${row.year}/${row.props._id}`}>Create Envelope</Link>
+                      <Link
+                        className="btn btn-link"
+                        to={`/createEnvelope/${row.year}/${row.props._id}`}
+                      >
+                        Create Envelope
+                      </Link>
                     </TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>
-                  {recordList()}
-                </TableBody>
+                <TableBody>{recordList()}</TableBody>
               </Table>
             </Box>
           </Collapse>
@@ -142,13 +163,17 @@ const YearRecord = (props) => {
         <TableCell align="right">{props.record.spent}</TableCell>
         <TableCell align="right">{props.record.remaining}</TableCell>
         <TableCell align="right">
-          <Link className="btn btn-link" to={`/edit/${props.record.year}`}>Edit</Link> |
-          <button className="btn btn-link"
+          <Link className="btn btn-link" to={`/edit/${props.record.year}`}>
+            Edit
+          </Link>{' '}
+          |
+          <button
+            className="btn btn-link"
             onClick={() => {
               props.deleteRecord(props.record.year);
             }}
           >
-          Delete
+            Delete
           </button>
         </TableCell>
       </TableRow>
@@ -170,7 +195,8 @@ const YearRecord = (props) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {props.record.months.map(row => (
+                  {console.log(props.record.months)}
+                  {props.record.months.map((row) => (
                     <MonthRecord props={row} year={props.record.year} />
                   ))}
                 </TableBody>
@@ -182,40 +208,40 @@ const YearRecord = (props) => {
     </React.Fragment>
   );
 };
- 
+
 export default function RecordList() {
   const [records, setRecords] = useState([]);
- 
+
   // This method fetches the records from the database.
   useEffect(() => {
     async function getRecords() {
       const response = await fetch(`http://localhost:5000/year/all`);
- 
+
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         window.alert(message);
         return;
       }
- 
+
       const records = await response.json();
       setRecords(records);
     }
- 
+
     getRecords();
- 
+
     return;
-  }, [records.length]);
- 
+  }, []);
+
   // This method will delete a record
   async function deleteRecord(year) {
     await fetch(`http://localhost:5000/year/${year}`, {
-      method: "DELETE"
+      method: 'DELETE',
     });
- 
+
     const newYears = records.filter((el) => el.year !== year);
     setRecords(newYears);
   }
- 
+
   // This method will map out the records on the table
   function recordList() {
     return records.map((record) => {
@@ -228,7 +254,7 @@ export default function RecordList() {
       );
     });
   }
- 
+
   // This following section will display the table with the records of individuals.
   return (
     <TableContainer>
