@@ -33,7 +33,6 @@ const MonthRecord = (row) => {
   // This method fetches the records from the database.
   useEffect(() => {
     async function getRecords() {
-      console.log(row.props._id);
       const response = await fetch(`http://localhost:5000/envelope/${row.props._id}/all`);
  
       if (!response.ok) {
@@ -104,6 +103,9 @@ const MonthRecord = (row) => {
                     <TableCell align="right">Budget</TableCell>
                     <TableCell align="right">Spent</TableCell>
                     <TableCell align="right">Remaining</TableCell>
+                    <TableCell align="right">
+                      <Link className="btn btn-link" to={`/createEnvelope/${row.year}/${row.props._id}`}>Create Envelope</Link>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -169,7 +171,7 @@ const YearRecord = (props) => {
                 </TableHead>
                 <TableBody>
                   {props.record.months.map(row => (
-                    <MonthRecord props={row} />
+                    <MonthRecord props={row} year={props.record.year} />
                   ))}
                 </TableBody>
               </Table>
