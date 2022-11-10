@@ -3,9 +3,23 @@ const { Envelope } = require("../models/envelope");
 
 envelopeRouter.post("/", async (req, res) => {
   try {
-    const envelope = new Envelope({ month: req.body.month, category: req.body.category, budget: req.body.budget });
-    if (await Envelope.exists({ month: req.body.month, category: req.body.category })) {
-      throw new Error("Envelope already exists. Ending process to preserve data");
+    {
+      console.log(req.body.month);
+    }
+    const envelope = new Envelope({
+      month: req.body.month,
+      category: req.body.category,
+      budget: req.body.budget,
+    });
+    if (
+      await Envelope.exists({
+        month: req.body.month,
+        category: req.body.category,
+      })
+    ) {
+      throw new Error(
+        "Envelope already exists. Ending process to preserve data"
+      );
     }
     const dataToSave = await envelope.save();
     res.status(200).json(dataToSave);
@@ -40,7 +54,8 @@ envelopeRouter.get("/:id", async (req, res) => {
 envelopeRouter.get("/:monthId/all", async (req, res) => {
   try {
     const { monthId } = req.params;
-    const data = await Envelope.find({ month: monthId });
+    const data = await Envelope.find({ monthId });
+    console.log("data", data);
     res.json(data);
   } catch (e) {
     res.status(500).json({ message: e.message });
@@ -64,7 +79,7 @@ envelopeRouter.patch("/update/:id", async (req, res) => {
 envelopeRouter.patch("/updateAll", async (req, res) => {
   try {
     const amount = Number(req.body.amount);
-    await Envelope.updateMany({}, {$inc: { budget: amount }});
+    await Envelope.updateMany({}, { $inc: { budget: amount } });
     res.send();
   } catch (e) {
     res.status(400).json({ message: e.message });
@@ -77,8 +92,10 @@ envelopeRouter.patch("/transfer/:fromId/:toId", async (req, res) => {
     const { fromId, toId } = req.params;
     const from = await Envelope.findById(fromId);
     const to = await Envelope.findById(toId);
-    if (from.budget - Number(req.body.amount) < 0) 
-      throw new Error(`Not enough funds available in ${from.category} budget to transfer to ${to.category}`);
+    if (from.budget - Number(req.body.amount) < 0)
+      throw new Error(
+        `Not enough funds available in ${from.category} budget to transfer to ${to.category}`
+      );
     from.budget -= Number(req.body.amount);
     to.budget += Number(req.body.amount);
     const newTo = await Envelope.findByIdAndUpdate(toId, to);
