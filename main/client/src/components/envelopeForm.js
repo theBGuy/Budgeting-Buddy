@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-export default function EnvelopeForm (props) {
+export default function EnvelopeForm(props) {
   const params = useParams();
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -13,31 +13,32 @@ export default function EnvelopeForm (props) {
   useEffect(() => {
     if (params.id) {
       async function fetchData() {
-          
-        const response = await fetch(`http://localhost:5000/envelope/${params.id}`);
-            
+        const response = await fetch(
+          `http://localhost:5000/envelope/${params.id}`
+        );
+
         if (!response.ok) {
           const message = `An error has occurred: ${response.statusText}`;
           window.alert(message);
           return;
         }
-            
+
         const record = await response.json();
         if (!record) {
           window.alert(`Record with id ${params.id} not found`);
           navigate("/");
           return;
         }
-            
+
         setForm(record);
       }
-            
+
       fetchData();
-            
+
       return;
     }
   }, [params.id, navigate]);
-    
+
   function updateForm(value) {
     return setForm((prev) => {
       return { ...prev, ...value };
@@ -47,22 +48,26 @@ export default function EnvelopeForm (props) {
   async function onSubmit(e) {
     e.preventDefault();
     const { isCreate } = props;
-        
+
     if (isCreate) {
       // When a post request is sent to the create url, we'll add a new record to the database.
       const newEnvelope = { ...form };
-      await fetch(`http://localhost:5000/year/${params.year}/${form.month}/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(Object.assign(newEnvelope, { monthId: params.month })),
-      })
-        .catch(error => {
-          window.alert(error);
-          return;
-        });
-            
+      await fetch(
+        `http://localhost:5000/year/${params.year}/${params.month}/add`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(
+            Object.assign(newEnvelope, { monthId: params.month })
+          ),
+        }
+      ).catch((error) => {
+        window.alert(error);
+        return;
+      });
+
       setForm({ month: "", category: "", budget: "" });
     } else {
       const editedEnvelope = {
@@ -70,17 +75,17 @@ export default function EnvelopeForm (props) {
         category: form.category,
         budget: form.budget,
       };
-            
+
       // This will send a patch request to update the data in the database.
       await fetch(`http://localhost:5000/envelope/update/${params.id}`, {
         method: "PATCH",
         body: JSON.stringify(editedEnvelope),
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
       });
     }
-        
+
     navigate("/");
   }
 
@@ -88,7 +93,12 @@ export default function EnvelopeForm (props) {
     <form onSubmit={onSubmit}>
       <div className="form-group">
         <label htmlFor="month">Month</label>
-        <select value={form.month} className="form-control" onChange={(e) => updateForm({ month: e.target.value })} required>
+        <select
+          value={form.month}
+          className="form-control"
+          onChange={(e) => updateForm({ month: e.target.value })}
+          required
+        >
           <option value="January">January</option>
           <option value="Febuary">Febuary</option>
           <option value="March">March</option>
