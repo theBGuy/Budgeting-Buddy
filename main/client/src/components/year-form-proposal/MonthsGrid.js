@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import './some.css'
-const activeStyle = { color: 'white', background: 'blue', height: '100%'}
-const inactiveStyle = { color: 'gray', background: 'dimgray', height: '100%'}
+import './some.css';
+const activeStyle = { color: 'white', background: 'blue', height: '100%'};
+const inactiveStyle = { color: 'gray', background: 'dimgray', height: '100%'};
 function MonthsGrid({budget, months, setMonths, remaining, setRemaining}) {
   const [step, setStep] = useState(1);
 
@@ -31,13 +31,14 @@ function MonthsGrid({budget, months, setMonths, remaining, setRemaining}) {
     const month = e.target.id;
     const updatedMonths = {...months};
     const previousMonthBudget = months[month].budget;
-    const currentMonthBudget = Number(e.target.value);
+    // ensure we don't go over max value
+    const currentMonthBudget = Number(e.target.value) < months[month].max ? Number(e.target.value) : months[month].max;
+
     if (previousMonthBudget > currentMonthBudget) {
       for (const month in updatedMonths) {
         if (month !== e.target.id) {
           months[month].max += (previousMonthBudget - currentMonthBudget)
         }
-        
       }
     }
 
@@ -48,18 +49,18 @@ function MonthsGrid({budget, months, setMonths, remaining, setRemaining}) {
         }
       }
     }
-    console.log(previousMonthBudget)
-    console.log(currentMonthBudget)
-    updatedMonths[month].budget = Number(e.target.value);
-    const total = Object.entries(updatedMonths).reduce((a, b) => a + b[1].budget, 0)
-    console.log(total)
+    console.log(previousMonthBudget);
+    console.log(currentMonthBudget);
+    updatedMonths[month].budget = currentMonthBudget;
+    const total = Object.entries(updatedMonths).reduce((a, b) => a + b[1].budget, 0);
+    console.log(total);
     setMonths(updatedMonths);
-    setRemaining(budget - total)
+    setRemaining(budget - total);
   }
 
   return (
     <div className="months-grid">
-      {Object.keys(months).map( month => {
+      {Object.keys(months).map(month => {
         return <div className="month">
           <div>{month}</div>
           <div className="month-budget">
