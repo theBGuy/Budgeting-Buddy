@@ -11,12 +11,24 @@ export default function YearForm (props) {
   const [distribution, setDistribution] = useState(0)
   const [months, setMonths] = useState(createMonthsObject(0, 0))
   
-  const updateYear = e => setYear(Number(e.target.value));
+  const updateYear = (e) => setYear(Number(e.target.value));
 
   function getDistribution(n) {
     const distributed = Math.floor(n / 12);
     const remainder = n % 12;
     return {distributed, remainder}
+  }
+
+  function populateYears() {
+    const currentYear = new Date().getFullYear();
+    const maxYear = currentYear + 99;
+    let yearsArr = [];
+
+    for (let i = currentYear; i <= maxYear; i++) {
+      yearsArr.push((<option key={i} value={i}>{i}</option>));
+    }
+
+    return yearsArr;
   }
 
   function createMonthsObject(distributed, remainder) {
@@ -28,13 +40,13 @@ export default function YearForm (props) {
     return months;
   }
 
-  const updateBudget = e => {
-    const newBudget = e.target.value;
+  const updateBudget = (e) => {
+    const newBudget = e.target.value > 0 ? e.target.value : 0;
     const {distributed, remainder} = getDistribution(newBudget);
     setBudget(newBudget)
     setRemaining(0)
     setMonths(createMonthsObject(distributed, remainder))
-  }
+  };
 
   // async function onSubmit(e) {
   //   e.preventDefault();
@@ -82,16 +94,14 @@ export default function YearForm (props) {
         <form>
           <div className="form-group">
             <label htmlFor="year">Year</label>
-            <input
-              type="text"
-              className="form-control"
-              id="year"
-              minLength={4}
-              maxLength={4}
+            <select
               value={year}
+              className="form-control"
               onChange={updateYear}
               required
-            />
+            >
+              {populateYears()}
+            </select>
           </div>
           <div className="form-group">
             <label htmlFor="budget">Budget</label>
@@ -100,6 +110,7 @@ export default function YearForm (props) {
               className="form-control"
               id="budget"
               value={budget}
+              min={0}
               onChange={updateBudget}
               required
             />
