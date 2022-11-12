@@ -26,7 +26,7 @@ const EnvelopeRecord = (props) => (
     <TableCell align="right">{props.record.spent}</TableCell>
     <TableCell align="right">{props.record.remaining}</TableCell>
     <TableCell align="right">
-      <Link className="btn btn-link" to={`/edit/${props.record._id}`}>
+      <Link className="btn btn-link" to={`/editEnvelope/${props.record._id}`}>
         Edit
       </Link>{' '}
       |
@@ -160,7 +160,7 @@ const YearRecord = (props) => {
         <TableCell align="right">{props.record.spent}</TableCell>
         <TableCell align="right">{props.record.remaining}</TableCell>
         <TableCell align="right">
-          <Link className="btn btn-link" to={`/edit/${props.record.year}`}>
+          <Link className="btn btn-link" to={`/editYear/${props.record.year}`}>
             Edit
           </Link>{' '}
           |

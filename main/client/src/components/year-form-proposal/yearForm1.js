@@ -1,15 +1,53 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import MonthsGrid from './MonthsGrid';
 import './some.css';
 
 export default function YearForm (props) {
   const navigate = useNavigate();
+  const params = useParams();
   const [year, setYear] = useState("");
   const [remaining, setRemaining] = useState(0);
   const [budget, setBudget] = useState("");
-  const [distribution, setDistribution] = useState(0)
-  const [months, setMonths] = useState(createMonthsObject(0, 0))
+  const [distribution, setDistribution] = useState(0);
+  const [months, setMonths] = useState(createMonthsObject(0, 0));
+
+  useEffect(() => {
+    if (params.year) {
+      async function fetchData() {
+        const response = await fetch(
+          `http://localhost:5000/year/${params.year}`
+        );
+
+        if (!response.ok) {
+          const message = `An error has occurred: ${response.statusText}`;
+          window.alert(message);
+          return;
+        }
+
+        const record = await response.json();
+        if (!record) {
+          window.alert(`Record with id ${params.year} not found`);
+          navigate("/");
+          return;
+        }
+        const yearInfo = record[0];
+
+        setYear(yearInfo.year);
+        setBudget(yearInfo.budget);
+
+        const total = yearInfo.months.reduce((a, b) => a + b.budget, 0);
+        const leftover = yearInfo.budget - total;
+        setRemaining(leftover);
+        const currMonths = Object.fromEntries(yearInfo.months.map(month => [month.month, {budget: month.budget, max: month.budget + leftover}]));
+        setMonths(currMonths);
+      }
+
+      fetchData();
+
+      return;
+    }
+  }, [params.year, navigate]);
   
   const updateYear = (e) => setYear(Number(e.target.value));
 
@@ -51,10 +89,10 @@ export default function YearForm (props) {
   async function onSubmit(e) {
     e.preventDefault();
     const { isCreate } = props;
+    const newYear = { year, budget, months };
         
     if (isCreate) {
       // When a post request is sent to the create url, we'll add a new record to the database.
-      const newYear = { year, budget, months };
       console.log(JSON.stringify(newYear));   
       await fetch("http://localhost:5000/year/add", {
         method: "POST",
@@ -67,22 +105,16 @@ export default function YearForm (props) {
           window.alert(error);
           return;
         });
-            
-      // setForm({ year: "", budget: "" });
     } else {
-      // const editedYear = {
-      //   year: form.year,
-      //   budget: form.budget,
-      // };
-            
+   
       // // This will send a patch request to update the data in the database.
-      // await fetch(`http://localhost:5000/year/${form.year}`, {
-      //   method: "PATCH",
-      //   body: JSON.stringify(editedYear),
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      // });
+      await fetch(`http://localhost:5000/year/${year}`, {
+        method: "PATCH",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(newYear),
+      });
     }
         
     navigate("/");
