@@ -1,7 +1,7 @@
 import React from "react";
 import EnvelopeForm from "./envelopeForm";
  
-export default function Edit() {
+export default function EditEnvelope() {
  
   // This following section will display the form that takes input from the user to update the data.
   return (
