@@ -48,50 +48,50 @@ export default function YearForm (props) {
     setMonths(createMonthsObject(distributed, remainder))
   };
 
-  // async function onSubmit(e) {
-  //   e.preventDefault();
-  //   const { isCreate } = props;
+  async function onSubmit(e) {
+    e.preventDefault();
+    const { isCreate } = props;
         
-  //   if (isCreate) {
-  //     // When a post request is sent to the create url, we'll add a new record to the database.
-  //     const newYear = { ...form };
+    if (isCreate) {
+      // When a post request is sent to the create url, we'll add a new record to the database.
+      const newYear = { year, budget, months };
+      console.log(JSON.stringify(newYear));   
+      await fetch("http://localhost:5000/year/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newYear),
+      })
+        .catch(error => {
+          window.alert(error);
+          return;
+        });
             
-  //     await fetch("http://localhost:5000/year/add", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(newYear),
-  //     })
-  //       .catch(error => {
-  //         window.alert(error);
-  //         return;
-  //       });
+      // setForm({ year: "", budget: "" });
+    } else {
+      // const editedYear = {
+      //   year: form.year,
+      //   budget: form.budget,
+      // };
             
-  //     setForm({ year: "", budget: "" });
-  //   } else {
-  //     const editedYear = {
-  //       year: form.year,
-  //       budget: form.budget,
-  //     };
-            
-  //     // This will send a patch request to update the data in the database.
-  //     await fetch(`http://localhost:5000/year/${form.year}`, {
-  //       method: "PATCH",
-  //       body: JSON.stringify(editedYear),
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //     });
-  //   }
+      // // This will send a patch request to update the data in the database.
+      // await fetch(`http://localhost:5000/year/${form.year}`, {
+      //   method: "PATCH",
+      //   body: JSON.stringify(editedYear),
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      // });
+    }
         
-  //   navigate("/");
-  // }
+    navigate("/");
+  }
 
   return (
     <div className="year-creation">
       <div className="container">
-        <form>
+        <form onSubmit={onSubmit}>
           <div className="form-group">
             <label htmlFor="year">Year</label>
             <select
@@ -115,11 +115,7 @@ export default function YearForm (props) {
               required
             />
           </div>
-
-          
-            
           <div className="remaining">Remaining {remaining}</div>
-          
           <MonthsGrid distribution={distribution} budget={budget} months={months} setMonths={setMonths} remaining={remaining} setRemaining={setRemaining}/>
           <div className="form-group">
             <input
@@ -129,7 +125,6 @@ export default function YearForm (props) {
             />
           </div>
         </form>
-        
       </div>
     </div>
   );

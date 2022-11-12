@@ -2,40 +2,19 @@ const yearRouter = require("express").Router();
 const { Year } = require("../models/year");
 const { Month } = require("../models/month");
 const { Envelope } = require("../models/envelope");
-// const mongoose = require("mongoose");
 
-async function createMonths(budget) {
-  const monthsArr = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  const months = await Promise.all(
-    monthsArr.map(async (monthString) => {
-      const month = new Month({
-        month: monthString,
-        budget,
-        remaining: budget,
-      });
-      return month;
-    })
-  );
-  return months;
-}
-
-async function createYear(n, budget = 0) {
-  const perMonth = budget > 0 ? Math.floor(budget / 12) : 0;
-  const months = await createMonths(perMonth);
-  const year = new Year({ year: n, budget, remaining: budget, months });
+async function createYear(info) {
+  if (info.months === undefined) throw new Error("Not enough information provided");
+  console.log(info);
+  const months = Object.keys(info.months).map(monthInfo => {
+    const newMonth = new Month({
+      month: monthInfo,
+      budget: info.months[monthInfo].budget,
+      remaining: info.months[monthInfo].budget,
+    });
+    return newMonth;
+  });
+  const year = new Year({ year: info.year, budget: info.budget, remaining: info.budget, months });
   await year.save();
   return year;
 }
@@ -46,7 +25,7 @@ async function createYear(n, budget = 0) {
  */
 yearRouter.post("/add", async (req, res) => {
   try {
-    const dataToSave = createYear(req.body.year, req.body.budget);
+    const dataToSave = createYear(req.body);
     res.status(200).json(dataToSave);
   } catch (e) {
     res.status(400).json({ message: e.message });
