@@ -4,6 +4,7 @@ const { Month } = require("../models/month");
 const { Envelope } = require("../models/envelope");
 
 async function createYear(info) {
+  console.log("info", info);
   if (info.months === undefined) throw new Error("Not enough information provided");
   console.log(info);
   const months = Object.keys(info.months).map((monthInfo) => {
@@ -20,18 +21,19 @@ async function createYear(info) {
     remaining: info.budget,
     months,
   });
+  console.log("year", year);
   await year.save();
   return year;
 }
-
 /** POST ROUTES */
 /**
  * Create a new year
  */
-yearsRouter.post("/add", async (req, res) => {
+yearsRouter.post("/createYear", async (req, res) => {
   try {
-    const dataToSave = createYear(req.body);
-    res.status(200).json(dataToSave);
+    const dataToSave = await createYear(req.body);
+    const success = dataToSave ? true : false;
+    res.status(200).json({ success });
   } catch (e) {
     res.status(400).json({ message: e.message });
   }

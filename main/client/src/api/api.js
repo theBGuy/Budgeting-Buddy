@@ -1,8 +1,8 @@
 import {instance as axios} from './axiosConfig';
 
 class Api {
-  async createYear(year) {
-    const response = await axios.get("/years/createYear", year);
+  async createYear(data) {
+    const response = await axios.post("/years/createYear", data);
     return response.data;
   }
 
@@ -17,12 +17,14 @@ class Api {
   }
 
   async editYear(data) {
-    const response = await axios.patch("/years/editYear", data);
+    const response = await axios.patch("/years/updateYear", data);
     return response.data;
   }
 
-  async deleteYear(data) {
-    const response = await axios.delete("/years/deleteYear", data);
+  async deleteYear(year) {
+    const response = await axios.delete("/years/deleteYear", {
+      data: { year },
+    });
     return response.data;
   }
 
@@ -32,7 +34,7 @@ class Api {
   }
 
   async editMonth(data) {
-    const response = await axios.patch("/months/editMonth", data);
+    const response = await axios.patch("/months/updateMonth", data);
     return response.data;
   }
 
@@ -52,7 +54,6 @@ class Api {
   }
 
   async editEnvelope(data) {
-    // data: { monthIds, envelopeName, newEnvelope}
     const response = await axios.patch("/envelopes/updateEnvelope", data);
     return response.data;
   }

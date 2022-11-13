@@ -6,7 +6,7 @@ import { Route, Routes } from "react-router-dom";
 // We import all the components we need in our app
 import Navbar from "./components/nav/navbar";
 import CreateEnvelope from "./components/envelope/CreateEnvelope";
-import CreateYear from "./components/year/CreateYear";
+import CreateYear from "./components/year/CreateYear1";
 import Years from "./components/year/Years";
 
 const App = () => {
@@ -15,8 +15,8 @@ const App = () => {
       <Navbar />
       <Routes>
         <Route exact path="/" element={<Years />} />
-        <Route path="/:year/:month/createEnvelope" element={<CreateEnvelope />} />
         <Route path="/createYear" element={<CreateYear type="Year" />} />
+        <Route path="/:year/:month/createEnvelope" element={<CreateEnvelope />} />
       </Routes>
     </div>
   );

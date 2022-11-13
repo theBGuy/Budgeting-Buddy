@@ -51,18 +51,17 @@ function CreateEnvelope() {
     setMonthIds([paramMonthId]);
   }
 
-  async function getMonths() {
-    const year = await api.getYear(params.year);
-    const months = year.months;
-    const paramsMonth = months.find((month) => month.month === params.month);
-    setMonths(months);
-    setMonthIds([paramsMonth._id]);
-  }
-
   useEffect(() => {
+    async function getMonths() {
+      const year = await api.getYear(params.year);
+      const months = year.months;
+      const paramsMonth = months.find((month) => month.month === params.month);
+      setMonths(months);
+      setMonthIds([paramsMonth._id]);
+    }
+
     getMonths();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [params.month, params.year]);
 
   return (
     <div className="create-envelope-container">
