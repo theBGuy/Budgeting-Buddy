@@ -16,7 +16,7 @@ class Api {
     return response.data;
   }
 
-  async editYear(data) {
+  async updateYear(data) {
     const response = await axios.patch("/years/updateYear", data);
     return response.data;
   }
@@ -33,7 +33,7 @@ class Api {
     return response.data;
   }
 
-  async editMonth(data) {
+  async updateMonth(data) {
     const response = await axios.patch("/months/updateMonth", data);
     return response.data;
   }
@@ -53,7 +53,7 @@ class Api {
     return response.data;
   }
 
-  async editEnvelope(data) {
+  async updateEnvelope(data) {
     const response = await axios.patch("/envelopes/updateEnvelope", data);
     return response.data;
   }
