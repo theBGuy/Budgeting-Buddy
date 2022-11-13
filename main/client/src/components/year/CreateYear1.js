@@ -7,7 +7,7 @@ import "./year.css";
 
 export default function YearForm(props) {
   const navigate = useNavigate();
-  const [year, setYear] = useState("");
+  const [year, setYear] = useState(new Date().getFullYear());
   const [remaining, setRemaining] = useState(0);
   const [budget, setBudget] = useState("");
   const [distribution, setDistribution] = useState(0);

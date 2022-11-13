@@ -4,9 +4,7 @@ const { Month } = require("../models/month");
 const { Envelope } = require("../models/envelope");
 
 async function createYear(info) {
-  console.log("info", info);
   if (info.months === undefined) throw new Error("Not enough information provided");
-  console.log(info);
   const months = Object.keys(info.months).map((monthInfo) => {
     const newMonth = new Month({
       month: monthInfo,
@@ -21,7 +19,6 @@ async function createYear(info) {
     remaining: info.budget,
     months,
   });
-  console.log("year", year);
   await year.save();
   return year;
 }
