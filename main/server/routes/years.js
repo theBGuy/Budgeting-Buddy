@@ -65,7 +65,7 @@ yearsRouter.post("/:year/:month/add", async (req, res) => {
     const options = {
       arrayFilters: [
         {
-          "months.month": req.params.month,
+          "months._id": monthId,
         },
       ],
     };
@@ -166,14 +166,15 @@ yearsRouter.get("/:year/:monthId/all", async (req, res) => {
  */
 yearsRouter.patch("/:year", async (req, res) => {
   try {
-    const { budget, remaining, spent } = req.body;
+    const { budget, months } = req.body;
     const updateDocument = {
-      $inc: {
+      $set: {
         budget: Number(budget || 0),
-        remaining: Number(remaining || 0),
-        spent: Number(spent || 0),
       },
     };
+    Object.keys(months).forEach((month, index) => {
+      updateDocument["$set"][`months.${index}.budget`] = Number(months[month].budget || 0);
+    });
     const updated = await Year.findOneAndUpdate(
       { year: Number(req.params.year) },
       updateDocument,
