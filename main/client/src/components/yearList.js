@@ -26,7 +26,7 @@ const EnvelopeRecord = (props) => (
     <TableCell align="right">{props.record.spent}</TableCell>
     <TableCell align="right">{props.record.remaining}</TableCell>
     <TableCell align="right">
-      <Link className="btn btn-link" to={`/edit/${props.record._id}`}>
+      <Link className="btn btn-link" to={`/editEnvelope/${props.record._id}`}>
         Edit
       </Link>{' '}
       |
@@ -142,7 +142,7 @@ const YearRecord = (props) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <React.Fragment>
+    <React.Fragment key={props.record._id}>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
         <TableCell>
           <IconButton
@@ -160,7 +160,7 @@ const YearRecord = (props) => {
         <TableCell align="right">{props.record.spent}</TableCell>
         <TableCell align="right">{props.record.remaining}</TableCell>
         <TableCell align="right">
-          <Link className="btn btn-link" to={`/edit/${props.record.year}`}>
+          <Link className="btn btn-link" to={`/editYear/${props.record.year}`}>
             Edit
           </Link>{' '}
           |
@@ -193,7 +193,7 @@ const YearRecord = (props) => {
                 </TableHead>
                 <TableBody>
                   {props.record.months.map((row) => (
-                    <MonthRecord props={row} year={props.record.year} />
+                    <MonthRecord key={row._id} props={row} year={props.record.year} />
                   ))}
                 </TableBody>
               </Table>
