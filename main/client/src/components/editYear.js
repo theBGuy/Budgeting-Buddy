@@ -1,5 +1,5 @@
 import React from "react";
-import YearForm from "./year-form-proposal/yearForm1";
+import YearForm from "./yearForm";
  
 export default function EditYear() {
  

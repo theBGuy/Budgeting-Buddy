@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import './some.css';
+import '../yearForm.css';
 const activeStyle = { color: 'white', background: 'blue', height: '100%'};
 const inactiveStyle = { color: 'gray', background: 'dimgray', height: '100%'};
 function MonthsGrid({budget, months, setMonths, remaining, setRemaining}) {
