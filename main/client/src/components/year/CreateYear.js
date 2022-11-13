@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import MonthsGrid from './MonthsGrid';
-import './some.css';
+import MonthsGrid from "./MonthsGrid";
+import "./year.css";
 
-export default function YearForm (props) {
+export default function YearForm(props) {
   const navigate = useNavigate();
   const params = useParams();
   const [year, setYear] = useState("");
@@ -15,9 +15,7 @@ export default function YearForm (props) {
   useEffect(() => {
     if (params.year) {
       async function fetchData() {
-        const response = await fetch(
-          `http://localhost:5000/year/${params.year}`
-        );
+        const response = await fetch(`http://localhost:5000/years/${params.year}`);
 
         if (!response.ok) {
           const message = `An error has occurred: ${response.statusText}`;
@@ -39,7 +37,12 @@ export default function YearForm (props) {
         const total = yearInfo.months.reduce((a, b) => a + b.budget, 0);
         const leftover = yearInfo.budget - total;
         setRemaining(leftover);
-        const currMonths = Object.fromEntries(yearInfo.months.map(month => [month.month, {budget: month.budget, max: month.budget + leftover}]));
+        const currMonths = Object.fromEntries(
+          yearInfo.months.map((month) => [
+            month.month,
+            { budget: month.budget, max: month.budget + leftover },
+          ])
+        );
         setMonths(currMonths);
       }
 
@@ -48,13 +51,13 @@ export default function YearForm (props) {
       return;
     }
   }, [params.year, navigate]);
-  
+
   const updateYear = (e) => setYear(Number(e.target.value));
 
   function getDistribution(n) {
     const distributed = Math.floor(n / 12);
     const remainder = n % 12;
-    return {distributed, remainder}
+    return { distributed, remainder };
   }
 
   function populateYears() {
@@ -63,16 +66,35 @@ export default function YearForm (props) {
     let yearsArr = [];
 
     for (let i = currentYear; i <= maxYear; i++) {
-      yearsArr.push((<option key={i} value={i}>{i}</option>));
+      yearsArr.push(
+        <option key={i} value={i}>
+          {i}
+        </option>
+      );
     }
 
     return yearsArr;
   }
 
   function createMonthsObject(distributed, remainder) {
-    const monthsArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    
-    const months = Object.fromEntries(monthsArr.map(month => [month, {budget: distributed, max: distributed}]));
+    const monthsArr = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const months = Object.fromEntries(
+      monthsArr.map((month) => [month, { budget: distributed, max: distributed }])
+    );
     months["January"].budget += remainder;
     months["January"].max += remainder;
     return months;
@@ -80,43 +102,41 @@ export default function YearForm (props) {
 
   const updateBudget = (e) => {
     const newBudget = e.target.value > 0 ? e.target.value : 0;
-    const {distributed, remainder} = getDistribution(newBudget);
-    setBudget(newBudget)
-    setRemaining(0)
-    setMonths(createMonthsObject(distributed, remainder))
+    const { distributed, remainder } = getDistribution(newBudget);
+    setBudget(newBudget);
+    setRemaining(0);
+    setMonths(createMonthsObject(distributed, remainder));
   };
 
   async function onSubmit(e) {
     e.preventDefault();
     const { isCreate } = props;
     const newYear = { year, budget, months };
-        
+
     if (isCreate) {
       // When a post request is sent to the create url, we'll add a new record to the database.
-      console.log(JSON.stringify(newYear));   
-      await fetch("http://localhost:5000/year/add", {
+      console.log(JSON.stringify(newYear));
+      await fetch("http://localhost:5000/years/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(newYear),
-      })
-        .catch(error => {
-          window.alert(error);
-          return;
-        });
+      }).catch((error) => {
+        window.alert(error);
+        return;
+      });
     } else {
-   
       // // This will send a patch request to update the data in the database.
-      await fetch(`http://localhost:5000/year/${year}`, {
+      await fetch(`http://localhost:5000/years/${year}`, {
         method: "PATCH",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(newYear),
       });
     }
-        
+
     navigate("/");
   }
 
@@ -126,12 +146,7 @@ export default function YearForm (props) {
         <form onSubmit={onSubmit}>
           <div className="form-group">
             <label htmlFor="year">Year</label>
-            <select
-              value={year}
-              className="form-control"
-              onChange={updateYear}
-              required
-            >
+            <select value={year} className="form-control" onChange={updateYear} required>
               {populateYears()}
             </select>
           </div>
@@ -148,13 +163,16 @@ export default function YearForm (props) {
             />
           </div>
           <div className="remaining">Remaining {remaining}</div>
-          <MonthsGrid distribution={distribution} budget={budget} months={months} setMonths={setMonths} remaining={remaining} setRemaining={setRemaining}/>
+          <MonthsGrid
+            distribution={distribution}
+            budget={budget}
+            months={months}
+            setMonths={setMonths}
+            remaining={remaining}
+            setRemaining={setRemaining}
+          />
           <div className="form-group">
-            <input
-              type="submit"
-              value={props.isCreate ? "Create Year" : "Edit Year"}
-              className="btn btn-primary"
-            />
+            <input type="submit" value="Create Year" className="btn btn-primary" />
           </div>
         </form>
       </div>

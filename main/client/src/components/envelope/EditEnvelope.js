@@ -1,0 +1,5 @@
+const EditEnvelope = ({ envelope }) => {
+  /* 
+    EditEnvelope
+  */
+};
