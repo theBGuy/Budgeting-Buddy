@@ -17,7 +17,7 @@ class Api {
   }
 
   async updateYear(data) {
-    const response = await axios.patch("/years/updateYear", data);
+    const response = await axios.patch(`/years/updateYear/${data.year}`, data);
     return response.data;
   }
 

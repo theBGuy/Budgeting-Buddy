@@ -164,7 +164,7 @@ yearsRouter.get("/:year/:monthId/all", async (req, res) => {
 /**
  * Update select year main properties. Use negative value to decrease a value by that amount
  */
-yearsRouter.patch("/:year", async (req, res) => {
+yearsRouter.patch("/updateYear/:year", async (req, res) => {
   try {
     const { budget, months } = req.body;
     const updateDocument = {
