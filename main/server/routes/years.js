@@ -243,7 +243,7 @@ yearsRouter.delete("/all", async (req, res) => {
 /**
  * Delete year by number
  */
-yearsRouter.delete("/:year", async (req, res) => {
+yearsRouter.delete("/deleteYear/:year", async (req, res) => {
   try {
     const year = req.params.year;
     const data = await Year.deleteOne({ year: year });
