@@ -1,4 +1,5 @@
 const envelopesRouter = require("express").Router();
+const { Year } = require("../models/year");
 const { Envelope } = require("../models/envelope");
 
 // CREATE ENVELOPE
@@ -8,16 +9,45 @@ envelopesRouter.post("/createEnvelope", async (req, res) => {
     route needs to take array of monthsIds and create an envelope for each monthId.
   */
   try {
-    const { category, budget, monthIds } = req.body;
-    const envelopeExists = await Envelope.exists({ category, monthId: monthIds[0] });
-    if (envelopeExists) {
-      throw new Error("Envelope already exists. Ending process to preserve data");
-    }
+    const { year, category, budget, monthIds } = req.body;
+    const yearData = await Year.findOne({ year: year });
+    const updateDocument = {
+      $push: {
+      },
+      $inc: {
+        remaining: 0,
+        spent: 0,
+      },
+    };
 
-    const envelope = new Envelope({ category, budget, monthId: monthIds[0] });
-    const result = await envelope.save();
-    const success = result ? true : false;
-    res.status(200).json({ success });
+    // Alright we've found the year, now lets iterate our months
+    for (let i = 0; i < yearData.months.length; i++) {
+      const [month, index] = [yearData.months[i], i];
+      if (monthIds.find(id => id === month._id.toString())) {
+        // check if there already exists an envelope for this category
+        if (await Envelope.exists({ category, monthId: month._id })) {
+          // perform update method instead
+          // track the new difference in budget so we can update the year/month budget allocated value
+          console.log("Envelope Exists");
+        } else {
+          const envelope = new Envelope({ category, budget, monthId: month._id });
+          const incAmount = Number(budget);
+          const decAmount = incAmount * -1;
+          // updateDocument["$push"][`months.${index}.envelopes`] = envelope._id;
+          updateDocument["$inc"]["remaining"] += decAmount;
+          updateDocument["$inc"]["spent"] += incAmount;
+          updateDocument["$inc"][`months.${index}.remaining`] = decAmount;
+          updateDocument["$inc"][`months.${index}.spent`] = incAmount;
+          await envelope.save();
+        }
+      }
+    }
+    const updated = await Year.findOneAndUpdate(
+      { year: year },
+      updateDocument,
+      { new: true, upsert: true }
+    );
+    res.status(200).json({ updated, sucesss: true });
   } catch (e) {
     res.status(400).json({ message: e.message });
   }

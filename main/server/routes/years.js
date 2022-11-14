@@ -162,7 +162,7 @@ yearsRouter.get("/:year/:monthId/all", async (req, res) => {
 
 /** PATCH ROUTES */
 /**
- * Update select year main properties. Use negative value to decrease a value by that amount
+ * Update select year
  */
 yearsRouter.patch("/updateYear/:year", async (req, res) => {
   try {
