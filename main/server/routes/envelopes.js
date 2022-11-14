@@ -23,23 +23,24 @@ envelopesRouter.post("/createEnvelope", async (req, res) => {
     // Alright we've found the year, now lets iterate our months
     for (let i = 0; i < yearData.months.length; i++) {
       const [month, index] = [yearData.months[i], i];
+      let [incAmount, decAmount] = [0, 0];
       if (monthIds.find(id => id === month._id.toString())) {
         // check if there already exists an envelope for this category
-        if (await Envelope.exists({ category, monthId: month._id })) {
-          // perform update method instead
+        const existingEnvelope = await Envelope.findOne({ category, monthId: month._id });
+        if (existingEnvelope) {
           // track the new difference in budget so we can update the year/month budget allocated value
-          console.log("Envelope Exists");
+          incAmount = Number(budget) - existingEnvelope.budget;
+          await Envelope.findByIdAndUpdate(existingEnvelope._id, { $inc: { budget: incAmount }});
         } else {
           const envelope = new Envelope({ category, budget, monthId: month._id });
-          const incAmount = Number(budget);
-          const decAmount = incAmount * -1;
-          // updateDocument["$push"][`months.${index}.envelopes`] = envelope._id;
-          updateDocument["$inc"]["remaining"] += decAmount;
-          updateDocument["$inc"]["spent"] += incAmount;
-          updateDocument["$inc"][`months.${index}.remaining`] = decAmount;
-          updateDocument["$inc"][`months.${index}.spent`] = incAmount;
           await envelope.save();
+          incAmount = Number(budget);
         }
+        decAmount = incAmount * -1;
+        updateDocument["$inc"]["remaining"] += decAmount;
+        updateDocument["$inc"]["spent"] += incAmount;
+        updateDocument["$inc"][`months.${index}.remaining`] = decAmount;
+        updateDocument["$inc"][`months.${index}.spent`] = incAmount;
       }
     }
     const updated = await Year.findOneAndUpdate(
@@ -47,7 +48,7 @@ envelopesRouter.post("/createEnvelope", async (req, res) => {
       updateDocument,
       { new: true, upsert: true }
     );
-    res.status(200).json({ updated, sucesss: true });
+    res.status(200).json({ updated });
   } catch (e) {
     res.status(400).json({ message: e.message });
   }
