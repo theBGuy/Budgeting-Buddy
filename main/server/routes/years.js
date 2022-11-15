@@ -4,7 +4,8 @@ const { createYear } = require("../controllers/year");
 
 /** POST ROUTES */
 /**
- * Create a new year
+ * @description Create a new year
+ * @param {Object} req.body - must contain all year info
  */
 yearsRouter.post("/createYear", async (req, res) => {
   try {
@@ -31,6 +32,7 @@ yearsRouter.get("/", async (req, res) => {
 
 /**
  * @description Get year by number
+ * @param {number} year
  */
 yearsRouter.get("/:year", async (req, res) => {
   try {
@@ -44,6 +46,7 @@ yearsRouter.get("/:year", async (req, res) => {
 
 /**
  * @description Get all months of a year
+ * @param {number} year
  */
 yearsRouter.get("/:year/months", async (req, res) => {
   try {
@@ -57,6 +60,8 @@ yearsRouter.get("/:year/months", async (req, res) => {
 
 /**
  * @description Get month of a year
+ * @param {number} year
+ * @param {string} month - name of month to get
  */
 yearsRouter.get("/:year/:month", async (req, res) => {
   try {
@@ -74,6 +79,7 @@ yearsRouter.get("/:year/:month", async (req, res) => {
 /** PATCH ROUTES */
 /**
  * @description Update select year
+ * @param {number} year
  */
 yearsRouter.patch("/updateYear/:year", async (req, res) => {
   try {
@@ -146,6 +152,7 @@ yearsRouter.patch("/:year/:month", async (req, res) => {
 /** DELETE ROUTES */
 /**
  * @description Delete all year documents
+ * @note Should probably delete all envelopes as well
  */
 yearsRouter.delete("/all", async (req, res) => {
   try {
@@ -158,6 +165,7 @@ yearsRouter.delete("/all", async (req, res) => {
 
 /**
  * @description Delete year
+ * @param {number} year
  */
 yearsRouter.delete("/deleteYear/:year", async (req, res) => {
   try {
