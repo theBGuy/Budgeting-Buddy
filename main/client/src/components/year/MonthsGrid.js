@@ -65,7 +65,7 @@ function MonthsGrid({ budget, months, setMonths, remaining, setRemaining }) {
     <div className="months-grid">
       {Object.keys(months).map((month) => {
         return (
-          <div className="month">
+          <div className="month" key={month}>
             <div>{month}</div>
             <div className="month-budget">
               <RemoveIcon onClick={() => stepDown(month)} sx={activeStyle} />
