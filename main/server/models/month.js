@@ -9,14 +9,18 @@ const monthSchema = new mongoose.Schema({
     required: true,
     type: Number
   },
+  allocatedBudget: {
+    type: Number,
+    default: 0,
+  },
   remaining: {
     required: true,
     type: Number,
   },
   spent: {
     type: Number, 
-    default: 0
-  }
+    default: 0,
+  },
 });
 
 const Month = mongoose.model("Month", monthSchema);
