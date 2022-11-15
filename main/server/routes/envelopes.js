@@ -54,7 +54,10 @@ envelopesRouter.post("/createEnvelope", async (req, res) => {
   }
 });
 
-// GET ENVELOPE BY ENVELOPE ID
+/**
+ * @description GET ENVELOPE BY ENVELOPE ID
+ * @param {ObjectId} envelopeId - mongodb _id
+ */ 
 envelopesRouter.get("/envelope/:envelopeId", async (req, res) => {
   try {
     const { envelopeId } = req.params.envelopeId;
@@ -65,7 +68,10 @@ envelopesRouter.get("/envelope/:envelopeId", async (req, res) => {
   }
 });
 
-// GET ENVELOPES BY MONTH ID
+/**
+ * @description GET ENVELOPES BY MONTH ID
+ * @param {ObjectId} envelopeId - mongodb _id
+ */ 
 envelopesRouter.get("/:monthId", async (req, res) => {
   try {
     const { monthId } = req.params;
@@ -78,7 +84,12 @@ envelopesRouter.get("/:monthId", async (req, res) => {
   }
 });
 
-// UPDATE ENVELOPE BY ENVELOPE ID
+/**
+ * @description UPDATE ENVELOPE BY ENVELOPE ID
+ * @param {Object} req.body - Needs to have envelope info included
+ * @param {ObjectId} req.body.id - mongodb _id of envelope
+ * @param {Object} req.body.data - envelope info to update
+ */ 
 envelopesRouter.patch("/updateEnvelope", async (req, res) => {
   try {
     const { id, data } = req.body;
@@ -90,13 +101,20 @@ envelopesRouter.patch("/updateEnvelope", async (req, res) => {
   }
 });
 
-// UPDATE ENVELOPES BY SELECTED MONTHS AND ENVELOPE NAME
+/**
+ * @description UPDATE ENVELOPES BY SELECTED MONTHS AND ENVELOPE NAME
+ * @param {Object} req.body - Needs to have envelope info included
+ * @param {number} req.body.year - numerical value of year we are updating envelopes for
+ * @param {Object} req.body.envelope - envelope object containing updated info
+ * @param {Array} req.body.monthIds - Array of numerical monthId's to update envelopes for
+ */
 envelopesRouter.patch("/updateEnvelopes", async (req, res) => {
   /*
     this route should 
       - receive an array of monthIds
       - receive envelope data with envelope name included
       - update all envelopes of same name of included monthIds
+      - should this update each envelope with the same value or take an array of envelope info to update?
    */
   try {
     res.status(501);
@@ -105,7 +123,11 @@ envelopesRouter.patch("/updateEnvelopes", async (req, res) => {
   }
 });
 
-// DELETE ENVELOPE
+/**
+ * @description DELETE ENVELOPE BY ENVELOPE ID
+ * @param {Object} req.body - Needs to have envelope info included
+ * @param {ObjectId} req.body.envelopeId - mongodb _id of envelope
+ */ 
 envelopesRouter.delete("/deleteEnvelope", async (req, res) => {
   try {
     const { envelopeId } = req.body;
@@ -133,6 +155,13 @@ envelopesRouter.delete("/deleteEnvelope", async (req, res) => {
 });
 
 // DELETE ENVELOPES BY MONTH
+/**
+ * @description DELETE ENVELOPES BY MONTH
+ * @param {Object} req.body - Needs to have envelope info included
+ * @param {number} req.body.year - numerical value of year we are deleting envelopes for
+ * @param {string} req.body.category - envelope category
+ * @param {Array} req.body.monthIds - Array of numerical monthId's to delete envelopes for
+ */
 envelopesRouter.delete("/deleteEnvelopes", async (req, res) => {
   /* 
     this route should 
@@ -147,50 +176,21 @@ envelopesRouter.delete("/deleteEnvelopes", async (req, res) => {
   }
 });
 
-// Update all
-// Potential to accidentally update every envelope of every month of every year.
-envelopesRouter.patch("/updateAll", async (req, res) => {
+/**
+ * @description DELETE ALL ENVELOPES ACROSS ALL YEARS
+ */ 
+envelopesRouter.delete("/deleteAll", async (req, res) => {
   try {
-    const amount = Number(req.body.amount);
-    await Envelope.updateMany({}, { $inc: { budget: amount } });
-    res.send();
-  } catch (e) {
-    res.status(400).json({ message: e.message });
-  }
-});
-
-// Transfer
-envelopesRouter.patch("/transfer/:fromId/:toId", async (req, res) => {
-  try {
-    const { fromId, toId } = req.params;
-    const from = await Envelope.findById(fromId);
-    const to = await Envelope.findById(toId);
-    if (from.budget - Number(req.body.amount) < 0)
-      throw new Error(
-        `Not enough funds available in ${from.category} budget to transfer to ${to.category}`
-      );
-    from.budget -= Number(req.body.amount);
-    to.budget += Number(req.body.amount);
-    const newTo = await Envelope.findByIdAndUpdate(toId, to);
-    await Envelope.findByIdAndUpdate(fromId, from);
-    res.send(newTo);
-  } catch (e) {
-    res.status(400).json({ message: e.message });
-  }
-});
-
-// Delete by ID Method or all
-// These operations should be separate.
-envelopesRouter.delete("/delete/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-    if (id === "all") {
-      await Envelope.deleteMany({});
-      res.send("All Documents have been deleted..");
-    } else {
-      const data = await Envelope.findByIdAndDelete(id);
-      res.send(`Document with ${data.category} has been deleted..`);
-    }
+    await Envelope.deleteMany();
+    // now handle all the years
+    const updateDocument = {
+      $set: { "months.$[].allocatedBudget": 0 },
+    };
+    const options = {
+      new: true,
+    };
+    await Year.updateMany({}, updateDocument, options );
+    res.send("All Documents have been deleted..");
   } catch (e) {
     res.status(400).json({ message: e.message });
   }
