@@ -75,13 +75,17 @@ envelopesRouter.get("/envelope/:envelopeId", async (req, res) => {
 envelopesRouter.get("/:monthId", async (req, res) => {
   try {
     const { monthId } = req.params;
-    console.log("monthId", monthId);
     const data = await Envelope.find({ monthId });
-    console.log("data", data);
     res.json(data);
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
+});
+
+envelopesRouter.get("/by-category/:category", async (req, res) => {
+  const { category } = req.params;
+  const data = await Envelope.find({ category });
+  res.json(data);
 });
 
 /**

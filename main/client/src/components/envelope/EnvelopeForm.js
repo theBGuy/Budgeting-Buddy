@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   FormGroup,
   FormControlLabel,
@@ -13,13 +13,17 @@ import {
 import api from "../../api/api";
 import "./envelope.css";
 
-function EnvelopeForm(props) {
+function EnvelopeForm() {
   const params = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
-  const isCreate = !!props.isCreate;
-  const [months, setMonths] = useState([]);
-  const [monthIds, setMonthIds] = useState([]);
-  const [category, setCategory] = useState("");
+
+  const isEdit = location.pathname.split("/").at(-1) === "edit";
+  const { year, month, envelope } = location.state;
+
+  const [monthIds, setMonthIds] = useState([month._id]);
+  const [category, setCategory] = useState(envelope ? envelope.category : "");
+  const [months, setMonths] = useState(year.months);
   const [budget, setBudget] = useState("");
 
   const updateBudget = (e) => setBudget(e.target.value);
@@ -37,30 +41,57 @@ function EnvelopeForm(props) {
   async function handleSubmit(e) {
     e.preventDefault();
     const envelope = { year: params.year, monthIds, category, budget };
-    await api.createEnvelope(envelope);
+    if (isEdit) {
+      await api.updateEnvelope(envelope);
+    } else {
+      await api.createEnvelope(envelope);
+    }
     navigate("/");
   }
 
-  function selectAll() {
-    setMonthIds(months.map((month) => month._id));
+  async function selectAll() {
+    setMonthIds(year.months.map((month) => month._id));
   }
 
   function deselectAll() {
-    const paramMonthId = months.find((month) => month.month === params.month)._id;
+    const paramMonthId = year.months.find(
+      (month) => month.month === params.month
+    )._id;
     setMonthIds([paramMonthId]);
   }
 
-  useEffect(() => {
-    async function getMonths() {
-      const year = await api.getYear(params.year);
-      const months = year.months;
-      const paramsMonth = months.find((month) => month.month === params.month);
-      setMonths(months);
-      setMonthIds([paramsMonth._id]);
-    }
+  function filterMonths(months, envelopesMonthIds) {
+    return months.filter((month) => envelopesMonthIds.includes(month._id));
+  }
 
-    getMonths();
-  }, [params.month, params.year]);
+  async function getEnvelopesByCategory(category) {
+    const envelopesByCategory = await api.getEnvelopesByCategory(category);
+    return envelopesByCategory;
+  }
+
+  function extractMonthIds(envelopes) {
+    const monthIds = envelopes.map((envelope) => envelope.monthId);
+    return monthIds;
+  }
+
+  async function determineAvailableMonths(category, months) {
+    const envelopesByCategory = await getEnvelopesByCategory(category);
+    const extractedMonthIds = extractMonthIds(envelopesByCategory);
+    const availableMonths = filterMonths(months, extractedMonthIds);
+    return availableMonths;
+  }
+
+  async function getAndSetAvailableMonths(category, months) {
+    const availableMonths = await determineAvailableMonths(category, months);
+    setMonths(availableMonths);
+  }
+
+  useEffect(() => {
+    if (isEdit) {
+      getAndSetAvailableMonths(envelope.category, months);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="create-envelope-container">
@@ -83,7 +114,9 @@ function EnvelopeForm(props) {
                     id={month._id}
                     checked={monthIds.includes(month._id)}
                     onChange={updateMonthIds}
-                    disabled={monthIds.length === 1 && monthIds[0] === month._id}
+                    disabled={
+                      monthIds.length === 1 && monthIds[0] === month._id
+                    }
                   />
                 }
                 label={month.month}
@@ -101,10 +134,11 @@ function EnvelopeForm(props) {
             id="outlined"
             label="Category"
             name="category"
-            value={category}
+            value={isEdit ? envelope.category : category}
             onChange={updateCategory}
             margin="normal"
             sx={{ width: "40ch" }}
+            disabled={isEdit ? true : false}
             required
           />
         </FormGroup>

@@ -1,7 +1,7 @@
 import { TableRow, TableCell } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const Envelope = ({ envelope, deleteEnvelope }) => (
+const Envelope = ({ year, month, envelope, deleteEnvelope }) => (
   <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
     <TableCell component="th" scope="row">
       {envelope.category}
@@ -10,7 +10,11 @@ const Envelope = ({ envelope, deleteEnvelope }) => (
     <TableCell align="right">{envelope.spent}</TableCell>
     <TableCell align="right">{envelope.remaining}</TableCell>
     <TableCell align="right">
-      <Link className="btn btn-link" to={`/editEnvelope/${envelope._id}`}>
+      <Link
+        className="btn btn-link"
+        to={`/${year.year}/${month.month}/${envelope.category}/edit`}
+        state={{ year, month, envelope }}
+      >
         Edit
       </Link>{" "}
       |

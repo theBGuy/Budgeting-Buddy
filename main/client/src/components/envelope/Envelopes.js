@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Envelope from "./Envelope";
 import api from "../../api/api";
 
-const Envelopes = ({ monthId }) => {
+const Envelopes = ({ year, month }) => {
   const [envelopes, setEnvelopes] = useState([]);
 
   async function getEnvelopes(monthId) {
@@ -13,20 +13,25 @@ const Envelopes = ({ monthId }) => {
   async function deleteEnvelope(envelopeId) {
     const { success } = await api.deleteEnvelope(envelopeId);
     if (success) {
-      setEnvelopes((prev) => prev.filter((envelope) => envelope._id !== envelopeId));
+      setEnvelopes((prev) =>
+        prev.filter((envelope) => envelope._id !== envelopeId)
+      );
     }
   }
 
   useEffect(() => {
-    getEnvelopes(monthId);
-  }, [monthId]);
+    getEnvelopes(month._id);
+  }, [month._id]);
 
   return (
     <>
       {envelopes.map((envelope) => (
         <Envelope
+          year={year}
+          month={month}
           key={envelope._id}
           envelope={envelope}
+          envelopes={envelopes}
           deleteEnvelope={deleteEnvelope}
         />
       ))}

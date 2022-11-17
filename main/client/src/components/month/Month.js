@@ -45,6 +45,7 @@ const Month = ({ year, month }) => {
                       <Link
                         className="btn btn-link"
                         to={`/${year.year}/${month.month}/createEnvelope`}
+                        state={{ year, month }}
                       >
                         Create Envelope
                       </Link>
@@ -52,7 +53,7 @@ const Month = ({ year, month }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <Envelopes monthId={month._id} key={month._id} />
+                  <Envelopes year={year} month={month} key={month._id} />
                 </TableBody>
               </Table>
             </Box>

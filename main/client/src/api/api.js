@@ -48,6 +48,11 @@ class Api {
     return response.data;
   }
 
+  async getEnvelopesByCategory(category) {
+    const response = await axios.get(`/envelopes/by-category/${category}`);
+    return response.data;
+  }
+
   async getEnvelope(envelopeId) {
     const response = await axios.get(`/envelopes/${envelopeId}`);
     return response.data;
