@@ -40,11 +40,16 @@ function EnvelopeForm() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const envelope = { year: params.year, monthIds, category, budget };
+    const envelopeData = {
+      year: year.year,
+      category,
+      budget,
+      monthIds,
+    };
     if (isEdit) {
-      await api.updateEnvelope(envelope);
+      await api.updateEnvelope(envelopeData);
     } else {
-      await api.createEnvelope(envelope);
+      await api.createEnvelope(envelopeData);
     }
     navigate("/");
   }

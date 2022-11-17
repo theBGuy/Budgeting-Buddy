@@ -38,8 +38,11 @@ class Api {
     return response.data;
   }
 
-  async createEnvelope(data) {
-    const response = await axios.post("/envelopes/createEnvelope", data);
+  async createEnvelope(envelopeData) {
+    const response = await axios.post(
+      "/envelopes/createEnvelope",
+      envelopeData
+    );
     return response.data;
   }
 
@@ -58,8 +61,11 @@ class Api {
     return response.data;
   }
 
-  async updateEnvelope(data) {
-    const response = await axios.patch("/envelopes/updateEnvelope", data);
+  async updateEnvelope(envelopeData) {
+    const response = await axios.patch(
+      "/envelopes/updateEnvelope",
+      envelopeData
+    );
     return response.data;
   }
 
