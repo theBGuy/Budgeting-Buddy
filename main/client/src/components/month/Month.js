@@ -1,13 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Table, TableCell, TableHead, TableRow } from "@mui/material";
 import { Box, Collapse, IconButton, TableBody } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Envelopes from "../envelope/Envelopes";
+import api from "../../api/api";
 
 const Month = ({ year, month }) => {
   const [showEnv, setOpenEnv] = useState(false);
+  const [envelopes, setEnvelopes] = useState([]);
+
+  async function getEnvelopes(monthId) {
+    const envelopes = await api.getEnvelopes(monthId);
+    setEnvelopes(envelopes);
+  }
+
+  async function deleteEnvelope(envelopeId) {
+    const { success } = await api.deleteEnvelope(envelopeId);
+    if (success) {
+      setEnvelopes((prev) =>
+        prev.filter((envelope) => envelope._id !== envelopeId)
+      );
+    }
+  }
+
+  useEffect(() => {
+    getEnvelopes(month._id);
+  }, [month._id]);
 
   return (
     <React.Fragment>
@@ -53,7 +73,13 @@ const Month = ({ year, month }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <Envelopes year={year} month={month} key={month._id} />
+                  <Envelopes
+                    year={year}
+                    month={month}
+                    envelopes={envelopes}
+                    deleteEnvelope={deleteEnvelope}
+                    key={month._id}
+                  />
                 </TableBody>
               </Table>
             </Box>

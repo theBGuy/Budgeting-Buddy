@@ -1,28 +1,6 @@
-import { useState, useEffect } from "react";
 import Envelope from "./Envelope";
-import api from "../../api/api";
 
-const Envelopes = ({ year, month }) => {
-  const [envelopes, setEnvelopes] = useState([]);
-
-  async function getEnvelopes(monthId) {
-    const envelopes = await api.getEnvelopes(monthId);
-    setEnvelopes(envelopes);
-  }
-
-  async function deleteEnvelope(envelopeId) {
-    const { success } = await api.deleteEnvelope(envelopeId);
-    if (success) {
-      setEnvelopes((prev) =>
-        prev.filter((envelope) => envelope._id !== envelopeId)
-      );
-    }
-  }
-
-  useEffect(() => {
-    getEnvelopes(month._id);
-  }, [month._id]);
-
+const Envelopes = ({ year, month, envelopes, deleteEnvelope }) => {
   return (
     <>
       {envelopes.map((envelope) => (
