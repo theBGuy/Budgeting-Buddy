@@ -3,7 +3,8 @@ const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
 
-const envelopeRoutes = require("./routes/envelope");
+const envelopesRoutes = require("./routes/envelopes");
+const yearsRoutes = require("./routes/years");
 
 require("dotenv").config({ path: "./config.env" });
 const port = process.env.PORT || 5001;
@@ -11,7 +12,8 @@ const port = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
-app.use("/envelope", envelopeRoutes);
+app.use("/envelopes", envelopesRoutes);
+app.use("/years", yearsRoutes);
 
 // connect to the db
 mongoose

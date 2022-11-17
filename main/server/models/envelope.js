@@ -2,17 +2,20 @@ const mongoose = require("mongoose");
 
 const envelopeSchema = new mongoose.Schema({
   category: {
+    type: String,
     required: true,
-    type: String
   },
   budget: {
+    type: Number,
     required: true,
-    type: Number
   },
   spent: {
     type: Number, 
     default: 0
   }, 
+  remaining: {
+    type: Number,
+  },
   monthId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Month"

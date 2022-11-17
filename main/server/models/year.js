@@ -4,11 +4,11 @@ const { monthSchema } = require("./month");
 const yearSchema = new mongoose.Schema({
   year: {
     required: true,
-    type: Number
+    type: Number,
   },
   budget: {
     required: true,
-    type: Number
+    type: Number,
   },
   remaining: {
     required: true,
@@ -16,9 +16,9 @@ const yearSchema = new mongoose.Schema({
   },
   spent: {
     type: Number,
-    default: 0
+    default: 0,
   },
-  months: [monthSchema]
+  months: [monthSchema],
 });
 
 const Year = mongoose.model("Year", yearSchema);
