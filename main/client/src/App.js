@@ -4,7 +4,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
  
 // We import all the components we need in our app
-import Navbar from "./components/nav/navbar";
+import NavBar from "./components/nav/NavBar";
 import CreateYear from "./components/year/CreateYear";
 import EditYear from "./components/year/EditYear";
 import Years from "./components/year/Years";
@@ -13,7 +13,7 @@ import EnvelopeForm from "./components/envelope/EnvelopeForm";
 const App = () => {
   return (
     <div>
-      <Navbar />
+      <NavBar />
       <Routes>
         <Route exact path="/" element={<Years />} />
         <Route path="/createYear" element={<CreateYear type="Year" />} />
