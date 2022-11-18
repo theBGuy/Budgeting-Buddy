@@ -9,6 +9,7 @@ export default function YearForm(props) {
   const navigate = useNavigate();
   const params = useParams();
   const [year, setYear] = useState(new Date().getFullYear());
+  const [usedYears, setUsedYears] = useState([]);
   const [remaining, setRemaining] = useState(0);
   const [budget, setBudget] = useState("");
   const [distribution, setDistribution] = useState(0);
@@ -37,6 +38,13 @@ export default function YearForm(props) {
       fetchData();
 
       return;
+    } else {
+      async function getUsedYears() {
+        const years = await api.getYears();
+        setUsedYears(years.map((el) => el.year));
+      }
+
+      getUsedYears();
     }
   }, [params.year, navigate]);
 
@@ -48,12 +56,14 @@ export default function YearForm(props) {
     return { distributed, remainder };
   }
 
+
   function populateYears() {
     const currentYear = new Date().getFullYear();
     const maxYear = currentYear + 99;
     const yearsArr = [];
 
     for (let i = currentYear; i <= maxYear; i++) {
+      if (usedYears.includes(i)) continue;
       yearsArr.push(
         <option key={i} value={i}>
           {i}
