@@ -33,7 +33,7 @@ const Years = () => {
 
   return (
     <TableContainer>
-      <Table className="table table-striped" style={{ marginTop: 70 }}>
+      <Table className="table table-striped" style={{ marginTop: 5 }}>
         <TableHead>
           <TableRow>
             <TableCell></TableCell>
