@@ -51,7 +51,7 @@ export default function YearForm(props) {
   function populateYears() {
     const currentYear = new Date().getFullYear();
     const maxYear = currentYear + 99;
-    let yearsArr = [];
+    const yearsArr = [];
 
     for (let i = currentYear; i <= maxYear; i++) {
       yearsArr.push(
@@ -100,10 +100,17 @@ export default function YearForm(props) {
   return (
     <div className="year-creation">
       <div className="container">
+        <h3>{props.isCreate ? "Create Year" : "Edit Year"}</h3>
         <form onSubmit={onSubmit}>
           <div className="form-group">
             <label htmlFor="year">Year</label>
-            <select value={year} className="form-control" onChange={updateYear} required>
+            <select 
+              value={year}
+              className="form-control"
+              onChange={updateYear}
+              required
+              disabled={params.year ? true : false}
+            >
               {populateYears()}
             </select>
           </div>
