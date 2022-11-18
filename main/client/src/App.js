@@ -2,6 +2,9 @@ import React from "react";
  
 // We use Route in order to define the different routes of our application
 import { Route, Routes } from "react-router-dom";
+
+// import bootstrap
+import "bootstrap/dist/css/bootstrap.css";
  
 // We import all the components we need in our app
 import NavBar from "./components/nav/NavBar";
