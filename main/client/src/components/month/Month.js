@@ -53,7 +53,7 @@ const Month = ({ year, month }) => {
               <Table
                 size="small"
                 className="envelopes"
-                sx={{ bgcolor: "darkgray" }}
+                sx={{ bgcolor: "lightgray" }}
               >
                 <TableHead>
                   <TableRow>

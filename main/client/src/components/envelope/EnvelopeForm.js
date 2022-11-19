@@ -2,13 +2,19 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   FormGroup,
-  FormControlLabel,
   Checkbox,
   TextField,
   Button,
   FormControl,
   FormLabel,
   ButtonGroup,
+  Box,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Typography,
 } from "@mui/material";
 import api from "../../api/api";
 import "./envelope.css";
@@ -25,6 +31,7 @@ function EnvelopeForm() {
   const [category, setCategory] = useState(envelope ? envelope.category : "");
   const [months, setMonths] = useState(year.months);
   const [budget, setBudget] = useState("");
+  const [envelops, setEnvlopes] = useState([]);
 
   const updateBudget = (e) => setBudget(e.target.value);
   const updateCategory = (e) => setCategory(e.target.value);
@@ -81,6 +88,7 @@ function EnvelopeForm() {
 
   async function determineAvailableMonths(category, months) {
     const envelopesByCategory = await getEnvelopesByCategory(category);
+    setEnvlopes(envelopesByCategory);
     const extractedMonthIds = extractMonthIds(envelopesByCategory);
     const availableMonths = filterMonths(months, extractedMonthIds);
     return availableMonths;
@@ -100,72 +108,99 @@ function EnvelopeForm() {
 
   return (
     <div className="create-envelope-container">
-      <form onSubmit={handleSubmit}>
-        <FormGroup>
-          <FormControl
-            required
-            error={false}
-            component="fieldset"
-            sx={{ m: 3 }}
-            variant="standard"
-          >
-            <FormLabel component="legend">Select Months</FormLabel>
+      <Box sx={{ margin: 1, border: 2, borderRadius: 2, paddingLeft: 2, paddingRight: 2, paddingBottom: 2 }}>
+        <form onSubmit={handleSubmit}>
+          <FormGroup>
+            <FormControl
+              required
+              error={false}
+              component="fieldset"
+              sx={{ m: 3 }}
+              variant="standard"
+            >
+              <Typography variant="h5" gutterBottom component="div">
+                Year  {year.year}
+              </Typography>
+              <FormLabel component="legend">Select Months</FormLabel>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell padding="checkbox"></TableCell>
+                    <TableCell>Month</TableCell>
+                    <TableCell align="right">Budget</TableCell>
+                    <TableCell align="right">Non Allocated</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {months.map((month) => (
+                    <>
+                      <TableRow key={month._id}>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            id={month._id}
+                            checked={monthIds.includes(month._id)}
+                            onChange={updateMonthIds}
+                            disabled={
+                              monthIds.length === 1 && monthIds[0] === month._id
+                            }
+                          />
+                        </TableCell>
+                        <TableCell>{month.month}</TableCell>
+                        <TableCell align="right">{month.budget}</TableCell>
+                        <TableCell align="right">{month.budget - month.allocatedBudget}</TableCell>
+                      </TableRow>
+                      {envelops.filter((el) => el.monthId === month._id).map((el) => (
+                        <TableRow sx={{ backgroundColor: "lightgray"}}>
+                          <TableCell></TableCell>
+                          <TableCell>{el.category}</TableCell>
+                          <TableCell align="right">{el.budget}</TableCell>
+                          <TableCell></TableCell>
+                        </TableRow>
+                      ))}
+                    </>
+                  ))}
+                </TableBody>
+              </Table>
+              <ButtonGroup>
+                <Button onClick={selectAll}>Select All</Button>
+                <Button onClick={deselectAll}>Deselect All</Button>
+              </ButtonGroup>
+            </FormControl>
+          </FormGroup>
 
-            {months.map((month) => (
-              <FormControlLabel
-                key={month._id}
-                control={
-                  <Checkbox
-                    id={month._id}
-                    checked={monthIds.includes(month._id)}
-                    onChange={updateMonthIds}
-                    disabled={
-                      monthIds.length === 1 && monthIds[0] === month._id
-                    }
-                  />
-                }
-                label={month.month}
-              />
-            ))}
-            <ButtonGroup>
-              <Button onClick={selectAll}>Select All</Button>
-              <Button onClick={deselectAll}>Deselect All</Button>
-            </ButtonGroup>
-          </FormControl>
-        </FormGroup>
+          <FormGroup>
+            <TextField
+              id="outlined"
+              label="Category"
+              name="category"
+              value={isEdit ? envelope.category : category}
+              onChange={updateCategory}
+              margin="normal"
+              sx={{ width: "40ch" }}
+              disabled={isEdit ? true : false}
+              required
+            />
+          </FormGroup>
 
-        <FormGroup>
-          <TextField
-            id="outlined"
-            label="Category"
-            name="category"
-            value={isEdit ? envelope.category : category}
-            onChange={updateCategory}
-            margin="normal"
-            sx={{ width: "40ch" }}
-            disabled={isEdit ? true : false}
-            required
-          />
-        </FormGroup>
+          <FormGroup>
+            <TextField
+              id="outlined"
+              label="Budget"
+              name="budget"
+              value={budget}
+              onChange={updateBudget}
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              margin="normal"
+              sx={{ width: "40ch" }}
+              required
+            />
+          </FormGroup>
 
-        <FormGroup>
-          <TextField
-            id="outlined"
-            label="Budget"
-            name="budget"
-            value={budget}
-            onChange={updateBudget}
-            inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-            margin="normal"
-            sx={{ width: "40ch" }}
-            required
-          />
-        </FormGroup>
-
-        <Button type="submit" variant="contained">
-          Submit
-        </Button>
-      </form>
+          <Button type="submit" variant="contained">
+            Submit
+          </Button>
+        </form>
+      </Box>
     </div>
   );
 }

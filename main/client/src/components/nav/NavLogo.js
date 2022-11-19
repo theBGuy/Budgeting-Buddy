@@ -16,7 +16,6 @@ const NavLogo = () => {
       <Typography
         variant="h6"
         sx={{ mr: 2 }}
-        onClick={() => navigate("/createYear")}
       >
         Budget Buddy
       </Typography>
