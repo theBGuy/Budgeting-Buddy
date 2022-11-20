@@ -14,7 +14,6 @@ import Months from "../month/Months";
 
 const Year = ({ year, deleteYear }) => {
   const [open, setOpen] = useState(false);
-  console.log("year in year", year);
   return (
     <>
       <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>

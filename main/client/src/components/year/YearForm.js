@@ -8,11 +8,11 @@ import "./year.css";
 export default function YearForm(props) {
   const navigate = useNavigate();
   const params = useParams();
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState(params.year ? params.year : new Date().getFullYear());
   const [usedYears, setUsedYears] = useState([]);
   const [remaining, setRemaining] = useState(0);
   const [budget, setBudget] = useState("");
-  const [distribution, setDistribution] = useState(0);
+  const [distribution] = useState(0);
   const [months, setMonths] = useState(createMonthsObject(0, 0));
 
   useEffect(() => {
@@ -56,7 +56,6 @@ export default function YearForm(props) {
     return { distributed, remainder };
   }
 
-
   function populateYears() {
     const currentYear = new Date().getFullYear();
     const maxYear = currentYear + 99;
@@ -69,6 +68,14 @@ export default function YearForm(props) {
           {i}
         </option>
       );
+    }
+
+    if (usedYears.includes(year)) {
+      let nextYear = year + 1;
+      while (usedYears.includes(nextYear)) {
+        nextYear++;
+      }
+      setYear(nextYear);
     }
 
     return yearsArr;
@@ -121,7 +128,10 @@ export default function YearForm(props) {
               required
               disabled={params.year ? true : false}
             >
-              {populateYears()}
+              {params.year
+                ? <option key={params.year} value={params.year}> {params.year} </option>
+                : populateYears()
+              }
             </select>
           </div>
           <div className="form-group">
