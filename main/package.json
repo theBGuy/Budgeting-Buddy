@@ -6,7 +6,7 @@
     "client": "npm start --prefix client",
     "install-server": "npm install --prefix server",
     "install-client": "npm install --prefix client",
-    "install": "npm install concurrently --save & concurrently \"npm run install-server\" \"npm run install-client\"",
+    "postinstall": "(cd server && npm install) && (cd ../client && npm install) && (exit 0)",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "dependencies": {
