@@ -30,11 +30,12 @@ envelopesRouter.post("/createEnvelope", async (req, res) => {
         }
         const remainingBudget = month.budget - month.allocatedBudget;
         // If we attempt to allocate more than available, set amount equal to the monthly budget total
-        const setBudget = budget > remainingBudget ? remainingBudget : budget;
+        let setBudget = budget > remainingBudget ? remainingBudget : budget;
         // check if there already exists an envelope for this category
         const existingEnvelope = await Envelope.findOne({ category, monthId: month._id });
         if (existingEnvelope) {
           await Envelope.findByIdAndUpdate(existingEnvelope._id, { $set: { budget: setBudget }});
+          setBudget -= existingEnvelope.budget;
         } else {
           const envelope = new Envelope({ category, budget: setBudget, monthId: month._id });
           await envelope.save();
@@ -111,6 +112,7 @@ envelopesRouter.patch("/updateEnvelope", async (req, res) => {
  * @param {number} req.body.year - numerical value of year we are updating envelopes for
  * @param {Object} req.body.envelope - envelope object containing updated info
  * @param {Array} req.body.monthIds - Array of numerical monthId's to update envelopes for
+ * @param {Array} req.body.envelopes - Array of existing envelope objects
  */
 envelopesRouter.patch("/updateEnvelopes", async (req, res) => {
   /*
