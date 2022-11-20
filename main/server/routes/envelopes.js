@@ -121,7 +121,37 @@ envelopesRouter.patch("/updateEnvelopes", async (req, res) => {
       - should this update each envelope with the same value or take an array of envelope info to update?
    */
   try {
-    res.status(501);
+    const { year, category, budget, monthIds, envelopes } = req.body;
+    const yearData = await Year.findOne({ year: year });
+    const updateDocument = {
+      $inc: {
+      },
+    };
+
+    // Alright we've found the year, now lets iterate our months
+    for (let i = 0; i < yearData.months.length; i++) {
+      const [month, index] = [yearData.months[i], i];
+      if (monthIds.find(id => id === month._id.toString())) {
+        if (month.allocatedBudget >= month.budget) {
+          // probably should give some sort of window message here, or potentially gray out envelope creation for the month
+          console.log(`${month.month} has no budget left to allocate for new envelopes.`);
+          continue;
+        }
+        const currentEnvelope = envelopes.find((el) => el.monthId === month._id.toString() && el.category === category);
+        const remainingBudget = month.budget - month.allocatedBudget;
+        // If we attempt to allocate more than available, set amount equal to the monthly budget total
+        const setBudget = budget - currentEnvelope.budget > remainingBudget ? remainingBudget : budget;
+        await Envelope.findOneAndUpdate({ category, monthId: month._id }, { $set: { budget: setBudget }});
+        updateDocument["$inc"][`months.${index}.allocatedBudget`] = setBudget - currentEnvelope.budget;
+      }
+    }
+
+    const updated = await Year.findOneAndUpdate(
+      { year: year },
+      updateDocument,
+      { new: true, upsert: true }
+    );
+    res.status(200).json({ updated });
   } catch (e) {
     res.status(400).json({ message: e.message });
   }

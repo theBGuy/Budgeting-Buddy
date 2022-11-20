@@ -31,7 +31,7 @@ function EnvelopeForm() {
   const [category, setCategory] = useState(envelope ? envelope.category : "");
   const [months, setMonths] = useState(year.months);
   const [budget, setBudget] = useState("");
-  const [envelops, setEnvlopes] = useState([]);
+  const [envelopes, setEnvlopes] = useState([]);
 
   const updateBudget = (e) => setBudget(e.target.value);
   const updateCategory = (e) => setCategory(e.target.value);
@@ -43,6 +43,7 @@ function EnvelopeForm() {
     } else {
       setMonthIds((prev) => prev.filter((x) => x !== monthId));
     }
+    console.log(monthIds);
   }
 
   async function handleSubmit(e) {
@@ -52,9 +53,10 @@ function EnvelopeForm() {
       category,
       budget,
       monthIds,
+      envelopes,
     };
     if (isEdit) {
-      await api.updateEnvelope(envelopeData);
+      await api.updateEnvelopes(envelopeData);
     } else {
       await api.createEnvelope(envelopeData);
     }
@@ -149,8 +151,8 @@ function EnvelopeForm() {
                         <TableCell align="right">{month.budget}</TableCell>
                         <TableCell align="right">{month.budget - month.allocatedBudget}</TableCell>
                       </TableRow>
-                      {envelops.filter((el) => el.monthId === month._id).map((el) => (
-                        <TableRow sx={{ backgroundColor: "lightgray"}}>
+                      {envelopes.filter((el) => el.monthId === month._id).map((el) => (
+                        <TableRow key={el._id} sx={{ backgroundColor: "lightgray"}}>
                           <TableCell></TableCell>
                           <TableCell>{el.category}</TableCell>
                           <TableCell align="right">{el.budget}</TableCell>

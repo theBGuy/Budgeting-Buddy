@@ -69,6 +69,14 @@ class Api {
     return response.data;
   }
 
+  async updateEnvelopes(envelopeData) {
+    const response = await axios.patch(
+      "/envelopes/updateEnvelopes",
+      envelopeData
+    );
+    return response.data;
+  }
+
   async deleteEnvelope(envelopeId) {
     const response = await axios.delete("/envelopes/deleteEnvelope", {
       data: { envelopeId },
