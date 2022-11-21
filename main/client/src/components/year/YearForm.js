@@ -158,6 +158,7 @@ export default function YearForm(props) {
           <div className="form-group">
             <input
               type="submit"
+              id="year-submit"
               value={props.isCreate ? "Create Year" : "Edit Year"}
               className="btn btn-primary"
             />
