@@ -6,7 +6,7 @@
 
 .year-creation .container {
   width: 900px;
-  background: #FFFDD0;
+  background: #d0e1ff;
   border-radius: 8px;
 }
 
@@ -21,7 +21,7 @@
 
 .year-creation .months-grid {
   display: flex;
-  background: #6f4e37;
+  background: #1976d2;
   flex-wrap: wrap;
   justify-content: center;
   border-radius: 8px;
@@ -31,7 +31,7 @@
   height: 200px;
   width: 200px;
   margin: 10px;
-  background: gray;
+  background: #d0e1ff;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -52,4 +52,10 @@
 
 .year-creation .remaining {
   margin-left: 10px;
+}
+
+#year-submit {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  background-color: #1976d2;
 }
