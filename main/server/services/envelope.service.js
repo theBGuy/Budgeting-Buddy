@@ -154,6 +154,76 @@ const updateEnvelopes = async ({ year, category, budget, monthIds, envelopes }) 
   };
 };
 
+/**
+ * @description DELETE ENVELOPE BY ENVELOPE ID
+ * @param {Object} req.body - Needs to have envelope info included
+ * @param {ObjectId} envelopeId - mongodb _id of envelope
+ * @returns {{Promise<Envelope>, Promise<Year>}}
+ */
+const deleteEnvelopeById = async ({ envelopeId }) => {
+  const envelope = await Envelope.findByIdAndDelete(envelopeId);
+  if (!envelope) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Envelope not found");
+  }
+  // for some reason there isn't a @subtract of @decrement...so we add the negative value to decrease the value of allocatedBudget
+  const updateDocument = {
+    $inc: { "months.$.allocatedBudget": Number(envelope.budget) * -1 },
+  };
+  const options = {
+    new: true,
+  };
+  const updatedYear = await Year.findOneAndUpdate(
+    { "months._id": envelope.monthId },
+    updateDocument,
+    options
+  );
+  return {
+    envelope,
+    updatedYear,
+  };
+};
+
+/**
+ * @description DELETE ENVELOPES BY MONTH
+ * @param {number} year - numerical value of year we are deleting envelopes for
+ * @param {string} category - envelope category
+ * @param {Array<ObjectId>} monthIds - Array of numerical mongoDb monthId's to delete envelopes for
+ * @returns {{Promise<Envelope>, Promise<Year>}}
+ */
+// eslint-disable-next-line no-unused-vars
+const deleteEnvelopes = async ({ year, category, monthIds }) => {
+  /* 
+    this route should 
+      - receive an array of monthIds
+      - receive an envelope name
+      - delete all envelopes of same name of included monthIds
+  */
+  throw new ApiError(httpStatus.NOT_IMPLEMENTED);
+};
+
+/**
+ * @description DELETE ALL ENVELOPES ACROSS ALL YEARS
+ * @returns {{Promise<Envelope>, Promise<Year>}}
+ */
+const deleteAllEnvelopes = async () => {
+  const envelopes = await Envelope.deleteMany();
+  if (!envelopes) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Envelopes not found");
+  }
+  // now handle all the years
+  const updateDocument = {
+    $set: { "months.$[].allocatedBudget": 0 },
+  };
+  const options = {
+    new: true,
+  };
+  const updatedYear = await Year.updateMany({}, updateDocument, options);
+  return {
+    envelopes,
+    updatedYear,
+  };
+};
+
 module.exports = {
   getEnvelopeById,
   getEnvelopeByMonthId,
@@ -161,4 +231,7 @@ module.exports = {
   createEnvelope,
   updateEnvelopeById,
   updateEnvelopes,
+  deleteEnvelopeById,
+  deleteEnvelopes,
+  deleteAllEnvelopes,
 };

@@ -114,6 +114,46 @@ const updateEnvelopes = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).json(data);
 });
 
+/**
+ * @description DELETE ENVELOPE BY ENVELOPE ID
+ * @param {Object} req.body - Needs to have envelope info included
+ * @param {ObjectId} req.body.envelopeId - mongodb _id of envelope
+ */ 
+const deleteEnvelopeById = catchAsync(async (req, res) => {
+  const { envelopeId } = req.body;
+  if (envelopeId === undefined) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Missing request body argument(s)");
+  }
+  const data = await envelopeService.deleteEnvelopeById({ envelopeId });
+  if (!data) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Failed to delete envelope");
+  }
+  res.status(httpStatus.OK).json({ ...data, success: true });
+});
+
+/**
+ * @description DELETE ENVELOPES BY MONTH
+ * @param {Object} req.body - Needs to have envelope info included
+ * @param {number} req.body.year - numerical value of year we are deleting envelopes for
+ * @param {string} req.body.category - envelope category
+ * @param {Array} req.body.monthIds - Array of numerical monthId's to delete envelopes for
+ */
+// eslint-disable-next-line no-unused-vars
+const deleteEnvelopes = catchAsync(async (req, res) => {
+  throw new ApiError(httpStatus.NOT_IMPLEMENTED);
+});
+
+/**
+ * @description DELETE ALL ENVELOPES ACROSS ALL YEARS
+ */ 
+const deleteAllEnvelopes = catchAsync(async (req, res) => {
+  const data = await envelopeService.deleteAllEnvelopes();
+  if (!data) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Failed to delete envelopes");
+  }
+  res.status(httpStatus.OK).json({ ...data, success: true });
+});
+
 module.exports = {
   getEnvelopeById,
   getEnvelopeByMonthId,
@@ -121,4 +161,7 @@ module.exports = {
   createEnvelope,
   updateEnvelopeById,
   updateEnvelopes,
+  deleteEnvelopeById,
+  deleteEnvelopes,
+  deleteAllEnvelopes,
 };
