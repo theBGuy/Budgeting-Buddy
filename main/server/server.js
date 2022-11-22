@@ -8,8 +8,8 @@ if (process.env.NODE_ENV === undefined) {
 }
 
 require("dotenv").config({ path: "./config.env" });
-const envelopesRoutes = require("./routes/envelopes");
-const yearsRoutes = require("./routes/years");
+const envelopeRouter = require("./routes/envelope.router");
+const yearRouter = require("./routes/year.router");
 
 const logger = require("./utils/logger");
 const morganMiddleware = require("./middlewares/morgan.middleware");
@@ -18,7 +18,6 @@ const { invalidPathHandler, errorConverter, errorHandler } = require("./utils/er
 const app = express();
 const port = process.env.PORT || 5001;
 
-
 // set-up middlewares
 app.use(helmet());
 app.use(helmet.hidePoweredBy());
@@ -26,8 +25,8 @@ app.use(cors());
 app.use(express.json());
 app.use(morganMiddleware);
 
-app.use("/envelopes", envelopesRoutes);
-app.use("/years", yearsRoutes);
+app.use("/envelopes", envelopeRouter);
+app.use("/years", yearRouter);
 
 /**
   @error-handling

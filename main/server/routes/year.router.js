@@ -1,4 +1,4 @@
-const yearsRouter = require("express").Router();
+const yearRouter = require("express").Router();
 const { Year } = require("../models/year");
 const { createYear } = require("../controllers/year");
 
@@ -7,7 +7,7 @@ const { createYear } = require("../controllers/year");
  * @description Create a new year
  * @param {Object} req.body - must contain all year info
  */
-yearsRouter.post("/createYear", async (req, res) => {
+yearRouter.post("/createYear", async (req, res) => {
   try {
     const dataToSave = await createYear(req.body);
     const success = dataToSave ? true : false;
@@ -21,7 +21,7 @@ yearsRouter.post("/createYear", async (req, res) => {
 /**
  * @description Get all year documents
  */
-yearsRouter.get("/", async (req, res) => {
+yearRouter.get("/", async (req, res) => {
   try {
     const data = await Year.find().sort({ year: 1 });
     res.json(data);
@@ -34,7 +34,7 @@ yearsRouter.get("/", async (req, res) => {
  * @description Get year by number
  * @param {number} year
  */
-yearsRouter.get("/:year", async (req, res) => {
+yearRouter.get("/:year", async (req, res) => {
   try {
     const year = req.params.year;
     const data = await Year.findOne({ year: year });
@@ -48,7 +48,7 @@ yearsRouter.get("/:year", async (req, res) => {
  * @description Get all months of a year
  * @param {number} year
  */
-yearsRouter.get("/:year/months", async (req, res) => {
+yearRouter.get("/:year/months", async (req, res) => {
   try {
     const year = req.params.year;
     const data = await Year.findOne({ year: year });
@@ -63,7 +63,7 @@ yearsRouter.get("/:year/months", async (req, res) => {
  * @param {number} year
  * @param {string} month - name of month to get
  */
-yearsRouter.get("/:year/:month", async (req, res) => {
+yearRouter.get("/:year/:month", async (req, res) => {
   try {
     const { year, month } = req.params;
     const projection = {
@@ -81,7 +81,7 @@ yearsRouter.get("/:year/:month", async (req, res) => {
  * @description Update select year
  * @param {number} year
  */
-yearsRouter.patch("/updateYear/:year", async (req, res) => {
+yearRouter.patch("/updateYear/:year", async (req, res) => {
   try {
     const { budget, months } = req.body;
     const updateDocument = {
@@ -107,7 +107,7 @@ yearsRouter.patch("/updateYear/:year", async (req, res) => {
  * @deprecated - think this can be removed but leaving it for now
  * @description Update all months of select year
  */
-yearsRouter.patch("/:year/all", async (req, res) => {
+yearRouter.patch("/:year/all", async (req, res) => {
   try {
     const updateDocument = {
       $inc: { "months.$[].budget": Number(req.body.amount || 0) },
@@ -126,7 +126,7 @@ yearsRouter.patch("/:year/all", async (req, res) => {
  * @deprecated - think this can be removed but leaving it for now
  * @description Update month of select year
  */
-yearsRouter.patch("/:year/:month", async (req, res) => {
+yearRouter.patch("/:year/:month", async (req, res) => {
   try {
     const updateDocument = {
       $inc: { "months.$[months].budget": Number(req.body.amount || 0) },
@@ -154,7 +154,7 @@ yearsRouter.patch("/:year/:month", async (req, res) => {
  * @description Delete all year documents
  * @note Should probably delete all envelopes as well
  */
-yearsRouter.delete("/all", async (req, res) => {
+yearRouter.delete("/all", async (req, res) => {
   try {
     const data = await Year.deleteMany();
     res.json(data);
@@ -167,7 +167,7 @@ yearsRouter.delete("/all", async (req, res) => {
  * @description Delete year
  * @param {number} year
  */
-yearsRouter.delete("/deleteYear/:year", async (req, res) => {
+yearRouter.delete("/deleteYear/:year", async (req, res) => {
   try {
     const year = req.params.year;
     const data = await Year.deleteOne({ year: year });
@@ -177,4 +177,4 @@ yearsRouter.delete("/deleteYear/:year", async (req, res) => {
   }
 });
 
-module.exports = yearsRouter;
+module.exports = yearRouter;

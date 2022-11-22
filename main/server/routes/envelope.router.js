@@ -1,4 +1,4 @@
-const envelopesRouter = require("express").Router();
+const envelopeRouter = require("express").Router();
 const { Year } = require("../models/year");
 const { Envelope } = require("../models/envelope");
 const envelopeController = require("../controllers/envelope.controller");
@@ -11,25 +11,25 @@ const envelopeController = require("../controllers/envelope.controller");
  * @param {number} req.body.budget - numerical value of of allocated budget for envelope
  * @param {Array} req.body.monthIds - Array of numerical monthId's to create envelopes for
  */
-envelopesRouter.post("/createEnvelope", envelopeController.createEnvelope);
+envelopeRouter.post("/createEnvelope", envelopeController.createEnvelope);
 
 /**
  * @description GET ENVELOPE BY ENVELOPE ID
  * @param {ObjectId} envelopeId - mongodb _id
  */
-envelopesRouter.get("/by-id/:envelopeId", envelopeController.getEnvelopeById);
+envelopeRouter.get("/by-id/:envelopeId", envelopeController.getEnvelopeById);
 
 /**
  * @description GET ENVELOPES BY MONTH ID
  * @param {ObjectId} envelopeId - mongodb _id
  */ 
-envelopesRouter.get("/by-monthId/:monthId", envelopeController.getEnvelopeByMonthId);
+envelopeRouter.get("/by-monthId/:monthId", envelopeController.getEnvelopeByMonthId);
 
 /**
  * @description GET ENVELOPES BY CATEGORY
  * @param {string} category
  */
-envelopesRouter.get("/by-category/:category", envelopeController.getEnvelopeByCategory);
+envelopeRouter.get("/by-category/:category", envelopeController.getEnvelopeByCategory);
 
 /**
  * @description UPDATE ENVELOPE BY ENVELOPE ID
@@ -37,7 +37,7 @@ envelopesRouter.get("/by-category/:category", envelopeController.getEnvelopeByCa
  * @param {ObjectId} envelopeId - mongodb _id of envelope
  * @param {Object} req.body.data - envelope info to update
  */ 
-envelopesRouter.patch("/by-id/:envelopeId", envelopeController.updateEnvelopeById);
+envelopeRouter.patch("/by-id/:envelopeId", envelopeController.updateEnvelopeById);
 
 /**
  * @description UPDATE ENVELOPES BY SELECTED MONTHS AND ENVELOPE NAME
@@ -47,14 +47,14 @@ envelopesRouter.patch("/by-id/:envelopeId", envelopeController.updateEnvelopeByI
  * @param {Array} req.body.monthIds - Array of numerical monthId's to update envelopes for
  * @param {Array} req.body.envelopes - Array of existing envelope objects
  */
-envelopesRouter.patch("/updateEnvelopes", envelopeController.updateEnvelopes);
+envelopeRouter.patch("/updateEnvelopes", envelopeController.updateEnvelopes);
 
 /**
  * @description DELETE ENVELOPE BY ENVELOPE ID
  * @param {Object} req.body - Needs to have envelope info included
  * @param {ObjectId} req.body.envelopeId - mongodb _id of envelope
  */ 
-envelopesRouter.delete("/deleteEnvelope", async (req, res) => {
+envelopeRouter.delete("/deleteEnvelope", async (req, res) => {
   try {
     const { envelopeId } = req.body;
     const result = await Envelope.findByIdAndDelete(envelopeId);
@@ -88,7 +88,7 @@ envelopesRouter.delete("/deleteEnvelope", async (req, res) => {
  * @param {string} req.body.category - envelope category
  * @param {Array} req.body.monthIds - Array of numerical monthId's to delete envelopes for
  */
-envelopesRouter.delete("/deleteEnvelopes", async (req, res) => {
+envelopeRouter.delete("/deleteEnvelopes", async (req, res) => {
   /* 
     this route should 
       - receive an array of monthIds
@@ -105,7 +105,7 @@ envelopesRouter.delete("/deleteEnvelopes", async (req, res) => {
 /**
  * @description DELETE ALL ENVELOPES ACROSS ALL YEARS
  */ 
-envelopesRouter.delete("/deleteAll", async (req, res) => {
+envelopeRouter.delete("/deleteAll", async (req, res) => {
   try {
     await Envelope.deleteMany();
     // now handle all the years
@@ -122,4 +122,4 @@ envelopesRouter.delete("/deleteAll", async (req, res) => {
   }
 });
 
-module.exports = envelopesRouter;
+module.exports = envelopeRouter;
