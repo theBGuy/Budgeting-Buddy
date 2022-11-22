@@ -1,6 +1,7 @@
 const envelopesRouter = require("express").Router();
 const { Year } = require("../models/year");
 const { Envelope } = require("../models/envelope");
+const envelopeController = require("../controllers/envelope.controller");
 
 /**
  * @description Create new envelopes for array of month ids
@@ -10,101 +11,33 @@ const { Envelope } = require("../models/envelope");
  * @param {number} req.body.budget - numerical value of of allocated budget for envelope
  * @param {Array} req.body.monthIds - Array of numerical monthId's to create envelopes for
  */
-envelopesRouter.post("/createEnvelope", async (req, res) => {
-  try {
-    const { year, category, budget, monthIds } = req.body;
-    const yearData = await Year.findOne({ year: year });
-    const updateDocument = {
-      $inc: {
-      },
-    };
-
-    // Alright we've found the year, now lets iterate our months
-    for (let i = 0; i < yearData.months.length; i++) {
-      const [month, index] = [yearData.months[i], i];
-      if (monthIds.find(id => id === month._id.toString())) {
-        if (month.allocatedBudget >= month.budget) {
-          // probably should give some sort of window message here, or potentially gray out envelope creation for the month
-          console.log(`${month.month} has no budget left to allocate for new envelopes.`);
-          continue;
-        }
-        const remainingBudget = month.budget - month.allocatedBudget;
-        // If we attempt to allocate more than available, set amount equal to the monthly budget total
-        let setBudget = budget > remainingBudget ? remainingBudget : budget;
-        // check if there already exists an envelope for this category
-        const existingEnvelope = await Envelope.findOne({ category, monthId: month._id });
-        if (existingEnvelope) {
-          await Envelope.findByIdAndUpdate(existingEnvelope._id, { $set: { budget: setBudget }});
-          setBudget -= existingEnvelope.budget;
-        } else {
-          const envelope = new Envelope({ category, budget: setBudget, monthId: month._id });
-          await envelope.save();
-        }
-        updateDocument["$inc"][`months.${index}.allocatedBudget`] = setBudget;
-      }
-    }
-
-    const updated = await Year.findOneAndUpdate(
-      { year: year },
-      updateDocument,
-      { new: true, upsert: true }
-    );
-    res.status(200).json({ updated });
-  } catch (e) {
-    res.status(400).json({ message: e.message });
-  }
-});
+envelopesRouter.post("/createEnvelope", envelopeController.createEnvelope);
 
 /**
  * @description GET ENVELOPE BY ENVELOPE ID
  * @param {ObjectId} envelopeId - mongodb _id
- */ 
-envelopesRouter.get("/envelope/:envelopeId", async (req, res) => {
-  try {
-    const { envelopeId } = req.params.envelopeId;
-    const data = await Envelope.findById(envelopeId);
-    res.json(data);
-  } catch (e) {
-    res.status(500).json({ message: e.message });
-  }
-});
+ */
+envelopesRouter.get("/by-id/:envelopeId", envelopeController.getEnvelopeById);
 
 /**
  * @description GET ENVELOPES BY MONTH ID
  * @param {ObjectId} envelopeId - mongodb _id
  */ 
-envelopesRouter.get("/:monthId", async (req, res) => {
-  try {
-    const { monthId } = req.params;
-    const data = await Envelope.find({ monthId });
-    res.json(data);
-  } catch (e) {
-    res.status(500).json({ message: e.message });
-  }
-});
+envelopesRouter.get("/by-monthId/:monthId", envelopeController.getEnvelopeByMonthId);
 
-envelopesRouter.get("/by-category/:category", async (req, res) => {
-  const { category } = req.params;
-  const data = await Envelope.find({ category });
-  res.json(data);
-});
+/**
+ * @description GET ENVELOPES BY CATEGORY
+ * @param {string} category
+ */
+envelopesRouter.get("/by-category/:category", envelopeController.getEnvelopeByCategory);
 
 /**
  * @description UPDATE ENVELOPE BY ENVELOPE ID
  * @param {Object} req.body - Needs to have envelope info included
- * @param {ObjectId} req.body.id - mongodb _id of envelope
+ * @param {ObjectId} envelopeId - mongodb _id of envelope
  * @param {Object} req.body.data - envelope info to update
  */ 
-envelopesRouter.patch("/updateEnvelope", async (req, res) => {
-  try {
-    const { id, data } = req.body;
-    const options = { new: true };
-    const result = await Envelope.findByIdAndUpdate(id, data, options);
-    res.send(result);
-  } catch (e) {
-    res.status(400).json({ message: e.message });
-  }
-});
+envelopesRouter.patch("/by-id/:envelopeId", envelopeController.updateEnvelopeById);
 
 /**
  * @description UPDATE ENVELOPES BY SELECTED MONTHS AND ENVELOPE NAME
@@ -114,50 +47,7 @@ envelopesRouter.patch("/updateEnvelope", async (req, res) => {
  * @param {Array} req.body.monthIds - Array of numerical monthId's to update envelopes for
  * @param {Array} req.body.envelopes - Array of existing envelope objects
  */
-envelopesRouter.patch("/updateEnvelopes", async (req, res) => {
-  /*
-    this route should 
-      - receive an array of monthIds
-      - receive envelope data with envelope name included
-      - update all envelopes of same name of included monthIds
-      - should this update each envelope with the same value or take an array of envelope info to update?
-   */
-  try {
-    const { year, category, budget, monthIds, envelopes } = req.body;
-    const yearData = await Year.findOne({ year: year });
-    const updateDocument = {
-      $inc: {
-      },
-    };
-
-    // Alright we've found the year, now lets iterate our months
-    for (let i = 0; i < yearData.months.length; i++) {
-      const [month, index] = [yearData.months[i], i];
-      if (monthIds.find(id => id === month._id.toString())) {
-        if (month.allocatedBudget >= month.budget) {
-          // probably should give some sort of window message here, or potentially gray out envelope creation for the month
-          console.log(`${month.month} has no budget left to allocate for new envelopes.`);
-          continue;
-        }
-        const currentEnvelope = envelopes.find((el) => el.monthId === month._id.toString() && el.category === category);
-        const remainingBudget = month.budget - month.allocatedBudget;
-        // If we attempt to allocate more than available, set amount equal to the monthly budget total
-        const setBudget = budget - currentEnvelope.budget > remainingBudget ? remainingBudget : budget;
-        await Envelope.findOneAndUpdate({ category, monthId: month._id }, { $set: { budget: setBudget }});
-        updateDocument["$inc"][`months.${index}.allocatedBudget`] = setBudget - currentEnvelope.budget;
-      }
-    }
-
-    const updated = await Year.findOneAndUpdate(
-      { year: year },
-      updateDocument,
-      { new: true, upsert: true }
-    );
-    res.status(200).json({ updated });
-  } catch (e) {
-    res.status(400).json({ message: e.message });
-  }
-});
+envelopesRouter.patch("/updateEnvelopes", envelopeController.updateEnvelopes);
 
 /**
  * @description DELETE ENVELOPE BY ENVELOPE ID
