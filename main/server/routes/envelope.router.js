@@ -15,13 +15,13 @@ envelopeRouter.post("/createEnvelope", envelopeController.createEnvelope);
  * @description GET ENVELOPE BY ENVELOPE ID
  * @param {ObjectId} envelopeId - mongodb _id
  */
-envelopeRouter.get("/by-id/:envelopeId", envelopeController.getEnvelopeById);
+envelopeRouter.get("/by-id/:envelopeId([A-Za-z0-9]+)", envelopeController.getEnvelopeById);
 
 /**
  * @description GET ENVELOPES BY MONTH ID
  * @param {ObjectId} envelopeId - mongodb _id
  */ 
-envelopeRouter.get("/by-monthId/:monthId", envelopeController.getEnvelopeByMonthId);
+envelopeRouter.get("/by-monthId/:monthId([A-Za-z0-9]+)", envelopeController.getEnvelopeByMonthId);
 
 /**
  * @description GET ENVELOPES BY CATEGORY
@@ -35,7 +35,7 @@ envelopeRouter.get("/by-category/:category", envelopeController.getEnvelopeByCat
  * @param {ObjectId} envelopeId - mongodb _id of envelope
  * @param {Object} req.body.data - envelope info to update
  */ 
-envelopeRouter.patch("/by-id/:envelopeId", envelopeController.updateEnvelopeById);
+envelopeRouter.patch("/by-id/:envelopeId([A-Za-z0-9]+)", envelopeController.updateEnvelopeById);
 
 /**
  * @description UPDATE ENVELOPES BY SELECTED MONTHS AND ENVELOPE NAME

@@ -22,7 +22,7 @@ class Api {
   }
 
   async deleteYear(year) {
-    const response = await axios.delete(`/years/deleteYear/${year}`, {
+    const response = await axios.delete(`/years/${year}`, {
       data: { year },
     });
     return response.data;

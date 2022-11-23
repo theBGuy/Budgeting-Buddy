@@ -19,9 +19,8 @@ const Years = () => {
   }
 
   async function deleteYear(year) {
-    const { acknowledged } = await api.deleteYear(year);
-    if (acknowledged) {
-      // setYears((prev) => prev.filter((year) => year.year !== year));
+    const { success } = await api.deleteYear(year);
+    if (success) {
       getYears();
     }
   }
