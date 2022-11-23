@@ -1,4 +1,4 @@
-import {instance as axios} from './axiosConfig';
+import { instance as axios } from './axiosConfig';
 
 class Api {
   async createYear(data) {
@@ -22,7 +22,7 @@ class Api {
   }
 
   async deleteYear(year) {
-    const response = await axios.delete(`/years/deleteYear/${year}`, {
+    const response = await axios.delete(`/years/${year}`, {
       data: { year },
     });
     return response.data;
@@ -47,7 +47,7 @@ class Api {
   }
 
   async getEnvelopes(monthId) {
-    const response = await axios.get(`/envelopes/${monthId}`);
+    const response = await axios.get(`/envelopes/by-monthId/${monthId}`);
     return response.data;
   }
 
@@ -57,13 +57,13 @@ class Api {
   }
 
   async getEnvelope(envelopeId) {
-    const response = await axios.get(`/envelopes/${envelopeId}`);
+    const response = await axios.get(`/envelopes/by-id/${envelopeId}`);
     return response.data;
   }
 
   async updateEnvelope(envelopeData) {
     const response = await axios.patch(
-      "/envelopes/updateEnvelope",
+      `/envelopes/by-id/${envelopeData._id}`,
       envelopeData
     );
     return response.data;
